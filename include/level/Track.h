@@ -41,7 +41,8 @@ public:
     Vector3 GetSpawnPoint(int playerID) const;
     Vector3 GetSpawnDirection() const { return trackData.spawnDirection; }
 
-    // Obstacles
+    // Collections accessors
+    const std::vector<std::unique_ptr<Checkpoint>>& GetCheckpoints() const { return checkpoints; }
     const std::vector<std::unique_ptr<Obstacle>>& GetObstacles() const { return obstacles; }
 
 private:

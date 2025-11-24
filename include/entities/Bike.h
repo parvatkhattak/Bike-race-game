@@ -1,9 +1,11 @@
 #ifndef BIKE_H
 #define BIKE_H
 
-#include "raylib.h"
-#include "raymath.h"
 #include <string>
+#include <cstdio>
+#include <cstdarg>
+#include <cstddef>
+#include "raylib.h"
 
 struct BikeStats {
     float maxSpeed;
@@ -37,7 +39,9 @@ public:
     Vector3 GetPosition() const { return position; }
     Vector3 GetVelocity() const { return velocity; }
     Vector3 GetDirection() const { return direction; }
-    float GetCurrentSpeed() const { return Vector3Length(velocity); }
+    Vector3 GetDirection() const { return direction; }
+    float GetSpeed() const; // Implemented in cpp
+    float GetMaxSpeed() const { return stats.maxSpeed; }
     float GetMaxSpeed() const { return stats.maxSpeed; }
     BikeStats GetStats() const { return stats; }
     Model GetModel() const { return model; }

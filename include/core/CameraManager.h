@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
-enum class CameraMode {
+enum class BikeGameCameraMode {
     FOLLOW_PLAYER1,
     FOLLOW_PLAYER2,
     SPLIT_SCREEN,
@@ -17,17 +17,17 @@ public:
     ~CameraManager() = default;
 
     void Update(float deltaTime);
-    void SetMode(CameraMode mode);
+    void SetMode(BikeGameCameraMode mode);
     void SetTarget(int playerID, Vector3 targetPosition, Vector3 targetDirection);
 
     Camera3D GetCamera(int playerID = 0) const;
-    CameraMode GetMode() const { return currentMode; }
+    BikeGameCameraMode GetMode() const { return currentMode; }
 
 private:
     void UpdateFollowCamera(Camera3D& camera, Vector3 targetPos, Vector3 targetDir, float deltaTime);
     void UpdateSplitScreen(float deltaTime);
 
-    CameraMode currentMode;
+    BikeGameCameraMode currentMode;
 
     // Cameras for each player (for split-screen)
     Camera3D camera1;

@@ -1,10 +1,15 @@
+```cpp
+#include <string>
+#include <vector>
+#include <memory>
 #include "entities/Player.h"
 #include "core/GameEngine.h"
 #include "utils/Logger.h"
 
-Player::Player(int id, const std::string& playerName) :
+Player::Player(int id, const std::string& name) :
     playerID(id),
-    name(playerName),
+    playerName(name),
+    isAI(false),
     currentLap(1),
     checkpointsPassed(0),
     currentLapTime(0.0f),
@@ -48,7 +53,7 @@ void Player::Render() const {
 
 void Player::StartRace() {
     ResetRace();
-    LOG_INFO("Player " + std::to_string(playerID) + " (" + name + ") started race");
+    LOG_INFO("Player " + std::to_string(playerID) + " (" + playerName + ") started race");
 }
 
 void Player::FinishLap(float lapTime) {
@@ -118,4 +123,50 @@ void Player::ProcessInput(float accelerateInput, float brakeInput, float turnInp
     if (nitroPressed && stats.upgradesUnlocked >= 3) {
         bike->ApplySpeedBoost(1.5f, 2.0f);
     }
+}
+
+void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos) {
+    if (!bike) return;
+    
+    Vector3 bikePos = bike->GetPosition();
+    Vector3 bikeDir = bike->GetDirection();
+    
+    // Calculate direction to next checkpoint
+    Vector3 targetDir = Vector3Subtract(nextCheckpointPos, bikePos);
+    targetDir.y = 0; // Ignore height difference for steering
+    targetDir = Vector3Normalize(targetDir);
+    
+    // Calculate steering angle using cross product
+    // Cross product Y component tells us left/right
+    Vector3 cross = Vector3CrossProduct(bikeDir, targetDir);
+    float turn = 0.0f;
+    
+    // Steering logic
+    if (cross.y > 0.1f) turn = -1.0f; // Turn Left
+    else if (cross.y < -0.1f) turn = 1.0f; // Turn Right
+    
+    // Adjust turn sensitivity based on how far off we are
+    float dot = Vector3DotProduct(bikeDir, targetDir);
+    
+    // Speed control
+    float accel = 0.0f;
+    float brake = 0.0f;
+    bool nitro = false;
+    
+    if (dot > 0.8f) {
+        // Facing mostly towards target, full speed
+        accel = 1.0f;
+        // Use nitro on straightaways occasionally
+        if (dot > 0.95f && (rand() % 100) < 2) nitro = true; 
+    } else if (dot > 0.5f) {
+        // Turning, moderate speed
+        accel = 0.5f;
+    } else {
+        // Sharp turn, brake
+        brake = 1.0f;
+        // Sharp turn
+        turn = (cross.y > 0) ? -1.0f : 1.0f;
+    }
+    
+    ProcessInput(accel, brake, turn, nitro);
 }

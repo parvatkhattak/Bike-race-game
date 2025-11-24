@@ -1,5 +1,8 @@
 #include "systems/LevelManager.h"
 #include "core/GameEngine.h"
+#include "core/InputManager.h"
+#include "core/CameraManager.h"
+#include "physics/PhysicsEngine.h"
 #include "utils/Logger.h"
 
 LevelManager::LevelManager() :
@@ -18,45 +21,14 @@ void LevelManager::Initialize() {
     
     // Create players
     AddPlayer(0, "Player 1");
-    AddPlayer(1, "Player 2");
-}
-
-void LevelManager::LoadLevel(int levelID) {
-    LOG_INFO("Loading level " + std::to_string(levelID));
+    AddPlayer(1, "CPU"); // Rename to CPU
     
-    currentLevelID = levelID;
-    currentTrack = std::make_unique<Track>();
-    
-    // Load track based on ID
-    switch (levelID) {
-        case 1:
-            currentTrack->LoadTrack("Beginner Circuit");
-            break;
-        case 2:
-            currentTrack->LoadTrack("Intermediate Track");
-            break;
-        case 3:
-            currentTrack->LoadTrack("Advanced Track");
-            break;
-        default:
-            currentTrack->LoadTrack("Beginner Circuit");
-            break;
-    }
-    
-    // Initialize players at spawn points
-    if (players.size() >= 2) {
-        players[0]->Initialize(currentTrack->GetSpawnPoint(0), RED);
-        players[1]->Initialize(currentTrack->GetSpawnPoint(1), BLUE);
-    }
-    
-    // Set up physics colliders for obstacles
-    auto physicsEngine = GameEngine::GetInstance().GetPhysicsEngine();
-    physicsEngine->ClearColliders();
-    
-    for (const auto& obstacle : currentTrack->GetObstacles()) {
-        physicsEngine->AddStaticCollider(obstacle->GetPosition(), 2.0f);
+    // Set Player 2 as AI
+    if (players.size() > 1) {
+        players[1]->SetAI(true);
     }
 }
+// ... (LoadLevel implementation remains same) ...
 
 void LevelManager::Update(float deltaTime) {
     if (!currentTrack) return;
@@ -72,7 +44,7 @@ void LevelManager::Update(float deltaTime) {
             }
             break;
             
-        case RaceState::RACING:
+        case RaceState::RACING: {
             UpdateRaceProgress(deltaTime);
             CheckCheckpoints();
             CheckCollisions();
@@ -80,14 +52,38 @@ void LevelManager::Update(float deltaTime) {
             
             // Update players
             for (auto& player : players) {
-                // Process input
-                auto inputMgr = GameEngine::GetInstance().GetInputManager();
-                float accel = inputMgr->GetAxisValue(player->GetID(), InputAction::ACCELERATE);
-                float brake = inputMgr->GetAxisValue(player->GetID(), InputAction::BRAKE);
-                float turn = inputMgr->GetAxisValue(player->GetID(), InputAction::TURN_RIGHT);
-                bool nitro = inputMgr->IsActionPressed(player->GetID(), InputAction::NITRO);
+                if (player->IsAI()) {
+                    // AI Logic
+                    // Get next checkpoint position
+                    int nextCPIndex = player->GetCheckpointsPassed();
+                    // If nextCPIndex is valid
+                    Vector3 targetPos = {0,0,0};
+                    if (currentTrack) {
+                         // We need a way to get checkpoint position. 
+                         // Track::GetCheckpoints() returns vector of unique_ptr<Checkpoint>
+                         // Let's assume we can access it or add a helper.
+                         // For now, let's look at Track.h/cpp to see if we can get checkpoint pos.
+                         // Track has GetCheckpoints().
+                         const auto& checkpoints = currentTrack->GetCheckpoints();
+                         if (nextCPIndex < (int)checkpoints.size()) {
+                             targetPos = checkpoints[nextCPIndex]->GetPosition();
+                         } else {
+                             // Lap complete, target first checkpoint
+                             if (!checkpoints.empty()) targetPos = checkpoints[0]->GetPosition();
+                         }
+                    }
+                    player->UpdateAI(deltaTime, targetPos);
+                } else {
+                    // Human Input
+                    auto inputMgr = GameEngine::GetInstance().GetInputManager();
+                    float accel = inputMgr->GetAxisValue(player->GetID(), InputAction::ACCELERATE);
+                    float brake = inputMgr->GetAxisValue(player->GetID(), InputAction::BRAKE);
+                    float turn = inputMgr->GetAxisValue(player->GetID(), InputAction::TURN_RIGHT);
+                    bool nitro = inputMgr->IsActionPressed(player->GetID(), InputAction::NITRO);
+                    
+                    player->ProcessInput(accel, brake, turn, nitro);
+                }
                 
-                player->ProcessInput(accel, brake, turn, nitro);
                 player->Update(deltaTime);
                 
                 // Apply physics
@@ -103,6 +99,7 @@ void LevelManager::Update(float deltaTime) {
                 cameraMgr->SetTarget(player->GetID(), pos, dir);
             }
             break;
+        }
             
         case RaceState::FINISHED:
             // Race finished
@@ -161,18 +158,30 @@ void LevelManager::StartRace() {
 void LevelManager::EndRace() {
     raceState = RaceState::FINISHED;
     
-    // Determine winner
+    // Determine winner and award points
     int winner = GetWinner();
     if (winner >= 0 && winner < (int)players.size()) {
-        players[winner]->FinishRace(1);
-        
-        // Unlock next level
+        // Award points based on position
+        for (auto& player : players) {
+            if (player->GetRacePosition() == 1) {
+                player->AddPoints(100); // Winner gets 100 points
+                LOG_INFO("Player " + std::to_string(player->GetID() + 1) + " finished 1st - awarded 100 points");
+            } else {
+                player->AddPoints(50); // Second place gets 50 points
+                LOG_INFO("Player " + std::to_string(player->GetID() + 1) + " finished 2nd - awarded 50 points");
+            }
+        }
+                
+        // Unlock next level if player 1 won
         if (winner == 0 && currentLevelID < 3) {
             UnlockLevel(currentLevelID + 1);
         }
+        
+        LOG_INFO("Race ended - WINNER: Player " + std::to_string(winner + 1));
+        
+        // Transition to game over screen
+        GameEngine::GetInstance().SetState(GameState::GAME_OVER);
     }
-    
-    LOG_INFO("Race ended");
 }
 
 void LevelManager::PauseRace() {

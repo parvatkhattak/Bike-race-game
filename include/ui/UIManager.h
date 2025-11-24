@@ -5,6 +5,8 @@
 #include <string>
 #include <functional>
 
+class Player; // Forward declaration
+
 enum class UIState {
     MAIN_MENU,
     BIKE_SELECT,
@@ -37,7 +39,7 @@ private:
     void RenderMainMenu() const;
     void RenderBikeSelect() const;
     void RenderLevelSelect() const;
-    void RenderInGameHUD() const;
+    void RenderInGameHUD(const Player& player1, const Player& player2) const;
     void RenderPauseMenu() const;
     void RenderGameOver() const;
 

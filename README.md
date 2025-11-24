@@ -1,38 +1,119 @@
-# 🏍️ Bike Race Game
+# 🎮 3D Bike Race Game
 
-A competitive 3D two-player bike racing game built with C++ and Raylib, featuring physics-based gameplay, progressive difficulty, and unlockable upgrades.
+[![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
+[![Raylib](https://img.shields.io/badge/Raylib-5.0-red.svg)](https://www.raylib.com/)
+[![License](https://img.shields.io/badge/License-Educational-green.svg)]()
+[![Build](https://img.shields.io/badge/Build-CMake-orange.svg)](https://cmake.org/)
 
-## 🎮 Features
+A competitive 3D two-player bike racing game built with **C++17** and **Raylib**, featuring physics-based gameplay, progressive difficulty, and unlockable upgrades.
 
-- **Two-Player Local Multiplayer** - Race head-to-head with split-screen action
-- **Physics-Based Movement** - Realistic acceleration, friction, and collision
-- **Multiple Tracks** - 3+ tracks with increasing difficulty
-- **Obstacle Course** - Navigate barriers, ramps, and dynamic hazards
-- **Upgrade System** - Unlock speed boosts, better handling, and cosmetic upgrades
-- **Progressive Difficulty** - From beginner-friendly to expert challenges
-- **Lap System** - Checkpoint-based lap counting and race timing
-- **Immersive 3D Graphics** - Modern 3D rendering with Raylib
+![Game Status](https://img.shields.io/badge/Status-Playable-success)
+![Progress](https://img.shields.io/badge/Progress-Complete-brightgreen)
 
-## 🛠️ Technologies
+---
 
-- **Language**: C++17
-- **Graphics**: Raylib 5.0
-- **Build System**: CMake 3.20+
-- **Version Control**: Git
+## 🎯 Features
 
-## 📋 Requirements
+✅ **Two-Player Local Multiplayer** - Race head-to-head with split-screen action  
+✅ **Physics-Based Movement** - Realistic acceleration, friction, and collision  
+✅ **3 Racing Tracks** - Beginner, Intermediate, and Advanced difficulty levels  
+✅ **Progressive Challenge** - Increasingly complex tracks with dynamic obstacles  
+✅ **Checkpoint System** - Lap counting with sequential checkpoint validation  
+✅ **Upgrade System** - Unlock speed boosts, better handling, and nitro  
+✅ **Complete UI** - Menus, HUD with speedometer, lap timer, and position tracking  
+✅ **Gamepad Support** - Full keyboard and gamepad controls for both players  
 
-- C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- CMake 3.20 or higher
-- OpenGL 3.3+ support
-- Git (for cloning)
+---
 
-### Platform-Specific Requirements
+## 🚀 Quick Start
 
-**Linux:**
+### One-Command Installation & Run
 ```bash
-sudo apt-get install build-essential cmake git
-sudo apt-get install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+git clone https://github.com/parvatkhattak/Bike-race-game.git
+cd Bike-race-game
+./install_and_run.sh
+```
+
+See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
+
+---
+
+## 🎮 Controls
+
+### Player 1 (Red Bike)
+- **W** - Accelerate
+- **S** - Brake/Reverse
+- **A** - Turn Left
+- **D** - Turn Right
+- **Left Shift** - Nitro Boost
+
+### Player 2 (Blue Bike)
+- **↑** - Accelerate
+- **↓** - Brake/Reverse
+- **←** - Turn Left
+- **→** - Turn Right
+- **Right Shift** - Nitro Boost
+
+### General
+- **ESC** - Pause/Menu
+- **ENTER** - Confirm
+- **Arrow Keys** - Navigate Menus
+
+---
+
+## 🏗️ Architecture
+
+### Core Systems
+- **GameEngine** - Main game loop, state management, subsystem coordination
+- **PhysicsEngine** - Gravity, friction, drag, collision detection/response
+- **InputManager** - Dual-player keyboard & gamepad handling
+- **CameraManager** - Split-screen follow cameras with smooth interpolation
+- **UIManager** - Complete menu system and in-game HUD
+- **LevelManager** - Race lifecycle, checkpoint tracking, position calculation
+- **AudioManager** - Music streaming and sound effects (ready for assets)
+
+### Entities
+- **Bike** - Physics-based vehicle with upgrade system
+- **Player** - Race tracking, statistics, and input processing
+- **Track** - Procedural track generation with 3 difficulty levels
+- **Checkpoint** - Lap counting with sphere-based detection
+- **Obstacle** - 5 types: Barriers, Moving Platforms, Slow Zones, Speed Boosts, Ramps
+
+---
+
+## 📦 Project Structure
+
+```
+Bike-race-game/
+├── CMakeLists.txt              # Build configuration
+├── README.md                   # This file
+├── QUICKSTART.md               # Installation guide
+├── src/                        # Source code (~2000+ lines)
+│   ├── main.cpp
+│   ├── core/                   # Game engine, input, camera
+│   ├── entities/               # Player, bike
+│   ├── physics/                # Physics simulation
+│   ├── level/                  # Tracks, checkpoints, obstacles
+│   ├── ui/                     # User interface
+│   └── systems/                # Level manager, audio
+├── include/                    # Header files
+└── assets/                     # Game assets (models, audio, textures)
+```
+
+---
+
+## 🛠️ Build Requirements
+
+- **C++17** compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
+- **CMake 3.20+**
+- **Raylib 5.0** (auto-downloaded by CMake)
+- **OpenGL 3.3+** support
+
+### Platform-Specific Dependencies
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install cmake build-essential libasound2-dev libx11-dev libgl1-mesa-dev
 ```
 
 **macOS:**
@@ -41,114 +122,124 @@ brew install cmake
 ```
 
 **Windows:**
-- Visual Studio 2017+ or MinGW-w64
-- CMake (download from cmake.org)
-
-## 🚀 Building & Running
-
-### Clone the Repository
-```bash
-git clone <repository-url>
-cd Bike-race-game
-```
-
-### Build the Project
-```bash
-mkdir build
-cd build
-cmake ..
-make -j$(nproc)
-```
-
-### Run the Game
-```bash
-./bin/BikeRaceGame
-```
-
-Or on Windows:
-```bash
-.\bin\BikeRaceGame.exe
-```
-
-## 🎯 Controls
-
-### Player 1
-- **W** - Accelerate
-- **S** - Brake/Reverse
-- **A** - Turn Left
-- **D** - Turn Right
-- **Left Shift** - Nitro Boost (when unlocked)
-
-### Player 2
-- **↑** - Accelerate
-- **↓** - Brake/Reverse
-- **←** - Turn Left
-- **→** - Turn Right
-- **Right Shift** - Nitro Boost (when unlocked)
-
-### General
-- **ESC** - Pause/Menu
-- **F11** - Toggle Fullscreen
-
-## 📁 Project Structure
-
-```
-Bike-race-game/
-├── CMakeLists.txt          # Build configuration
-├── README.md               # This file
-├── src/                    # Source files
-│   ├── main.cpp           # Entry point
-│   ├── core/              # Game engine core
-│   ├── entities/          # Player, Bike, etc.
-│   ├── physics/           # Physics engine
-│   ├── level/             # Track, obstacles
-│   ├── ui/                # User interface
-│   ├── systems/           # Game systems
-│   └── utils/             # Utilities
-├── include/                # Header files
-├── assets/                 # Game assets
-│   ├── models/            # 3D models
-│   ├── textures/          # Textures
-│   ├── audio/             # Sound & music
-│   └── data/              # Game data
-└── external/               # External libraries
-```
-
-## 🎓 Development Phases
-
-1. ✅ Project Setup & Architecture
-2. 🚧 Core Game Engine
-3. ⏳ Player & Bike System
-4. ⏳ Physics System
-5. ⏳ Track & Environment
-6. ⏳ UI System
-7. ⏳ Gameplay Features
-8. ⏳ Visual & Audio Polish
-9. ⏳ Save System & Progression
-10. ⏳ Testing & Optimization
-
-## 🤝 Contributing
-
-This is an educational project demonstrating Object-Oriented Programming principles in C++. Contributions and suggestions are welcome!
-
-## 📝 License
-
-This project is created for educational purposes.
-
-## 🎯 Future Enhancements
-
-- AI opponents
-- Online multiplayer
-- Weather effects (rain, fog)
-- Power-ups and boost zones
-- Replay system
-- Global leaderboards
-- VR support
-
-## 📧 Contact
-
-For questions or feedback, please open an issue on the repository.
+- Visual Studio 2019+ or MinGW-w64
+- CMake from [cmake.org](https://cmake.org/download/)
 
 ---
 
+## 🎓 Technical Highlights
+
+### Object-Oriented Design
+- **Design Patterns**: Singleton (GameEngine, Logger), Composition, Polymorphism
+- **Memory Management**: `std::unique_ptr` for automatic resource cleanup
+- **Modern C++**: Lambda functions, range-based loops, STL containers
+
+### Game Development Concepts
+- **Fixed Timestep Game Loop** (60 FPS)
+- **State Machine** for game states
+- **Component-Based Architecture**
+- **Event-Driven UI** with callbacks
+- **Physics Simulation**: Euler integration, impulse-based collision
+
+### Code Quality
+- **~2000+ lines** of organized C++ code
+- **15+ classes** following SOLID principles
+- **Modular subsystems** with clear interfaces
+- **Comprehensive documentation**
+
+---
+
+## 🎯 Game Modes
+
+### 1. Beginner Circuit
+- **Difficulty**: Easy
+- **Layout**: Simple oval track
+- **Checkpoints**: 5
+- **Obstacles**: Few static barriers
+- **Perfect for**: Learning controls
+
+### 2. Intermediate Track
+- **Difficulty**: Medium
+- **Layout**: Complex hexagon
+- **Checkpoints**: 6
+- **Obstacles**: Moving platforms, speed boost zones
+- **Perfect for**: Improving skills
+
+### 3. Advanced Track
+- **Difficulty**: Hard
+- **Layout**: Figure-8 with sharp turns
+- **Checkpoints**: 7
+- **Obstacles**: Many hazards, slow zones
+- **Perfect for**: Expert racers
+
+---
+
+## 📈 Progression System
+
+- 🏆 **Complete races** to unlock harder tracks
+- ⭐ **Earn points** based on position (100 for 1st, 50 for 2nd)
+- 🚀 **Track best lap times**
+- 🔓 **Unlock upgrades**: Speed, Acceleration, Handling, Nitro
+
+---
+
+## 🔮 Future Enhancements
+
+- [ ] AI opponents
+- [ ] Online multiplayer
+- [ ] Custom 3D bike models
+- [ ] Particle effects (dust, sparks)
+- [ ] Weather effects (rain, fog)
+- [ ] Power-ups and boost zones
+- [ ] Replay system
+- [ ] Save/load progress
+- [ ] Global leaderboards
+
+---
+
+## 🤝 Contributing
+
+This project is an educational demonstration of OOP principles in C++. Contributions and suggestions are welcome!
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is created for **educational purposes** demonstrating:
+- C++ Object-Oriented Programming
+- Game engine architecture
+- 3D graphics programming with Raylib
+- Physics simulation
+- Game design principles
+
+---
+
+## 🙏 Acknowledgments
+
+- **[Raylib](https://www.raylib.com/)** - Amazing game development library
+- **C++ Community** - For excellent documentation and resources
+- **Game Development Patterns** - Inspired by industry best practices
+
+---
+
+## 📧 Contact
+
+**Developer**: Parvat Khattak  
+**Repository**: [github.com/parvatkhattak/Bike-race-game](https://github.com/parvatkhattak/Bike-race-game)  
+**Issues**: [Report bugs or request features](https://github.com/parvatkhattak/Bike-race-game/issues)
+
+---
+
+<div align="center">
+
 **Made with ❤️ using C++ and Raylib**
+
+⭐ Star this repo if you found it helpful!
+
+</div>

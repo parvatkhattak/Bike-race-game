@@ -30,14 +30,16 @@ public:
 
     // Getters
     int GetID() const { return playerID; }
-    std::string GetName() const { return name; }
+    std::string GetName() const { return playerName; }
     Bike* GetBike() const { return bike.get(); }
     int GetCurrentLap() const { return currentLap; }
     int GetCheckpointsPassed() const { return checkpointsPassed; }
     float GetCurrentLapTime() const { return currentLapTime; }
+    float GetBestLapTime() const { return stats.bestLapTime; }
     float GetTotalRaceTime() const { return totalRaceTime; }
     PlayerStats GetStats() const { return stats; }
     int GetRacePosition() const { return racePosition; }
+    int GetTotalPoints() const { return stats.currentPoints; }
 
     // Setters
     void SetCheckpointsPassed(int count) { checkpointsPassed = count; }
@@ -45,12 +47,18 @@ public:
     void SetRacePosition(int position) { racePosition = position; }
     void AddPoints(int points) { stats.currentPoints += points; }
 
-    // Control
-    void ProcessInput(float accelerateInput, float brakeInput, float turnInput, bool nitroPressed);
+
+    void ProcessInput(float accel, float brake, float turn, bool nitro);
+    
+    // AI Control
+    void SetAI(bool ai) { isAI = ai; }
+    bool IsAI() const { return isAI; }
+    void UpdateAI(float deltaTime, const Vector3& nextCheckpointPos);
 
 private:
     int playerID;
-    std::string name;
+    std::string playerName;
+    bool isAI; // Flag for AI control
     std::unique_ptr<Bike> bike;
 
     // Race state

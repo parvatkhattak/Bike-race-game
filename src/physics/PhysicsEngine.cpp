@@ -20,10 +20,56 @@ void PhysicsEngine::Update(float deltaTime) {
 void PhysicsEngine::ApplyPhysics(Bike* bike, float deltaTime) {
     if (!bike) return;
     
-    ApplyGravity(bike, deltaTime);
-    ApplyFriction(bike, deltaTime);
-    ApplyDrag(bike, deltaTime);
-    KeepOnTrack(bike);
+    Vector3 position = bike->GetPosition();
+    Vector3 velocity = bike->GetVelocity();
+    
+    // Apply gravity
+    velocity.y -= gravity * deltaTime; // Gravity pulls down, so subtract
+    
+    // Ground collision (simple ground plane at y = 0)
+    if (position.y <= groundHeight) {
+        position.y = groundHeight;
+        velocity.y = 0.0f;
+        bike->SetOnGround(true);
+        
+        // Apply friction when on ground
+        velocity.x *= frictionCoefficient;
+        velocity.z *= frictionCoefficient;
+
+        // Stop completely if very slow on ground
+        if (Vector3Length({velocity.x, 0, velocity.z}) < 0.1f) {
+            velocity.x = 0.0f;
+            velocity.z = 0.0f;
+        }
+    } else {
+        bike->SetOnGround(false);
+    }
+    
+    // Air drag
+    velocity.x *= dragCoefficient;
+    velocity.z *= dragCoefficient;
+    
+    // Update position
+    position.x += velocity.x * deltaTime;
+    position.y += velocity.y * deltaTime;
+    position.z += velocity.z * deltaTime;
+    
+    // Out of bounds check - reset bike if too far from track
+    float maxDistance = 100.0f;  // Maximum distance from origin
+    float distanceFromOrigin = sqrt(position.x * position.x + position.z * position.z);
+    
+    if (distanceFromOrigin > maxDistance) {
+        // Reset bike to starting position
+        position = {0.0f, groundHeight, 0.0f};
+        velocity = {0.0f, 0.0f, 0.0f};
+        bike->SetPosition(position);
+        bike->SetVelocity(velocity);
+        LOG_WARNING("Bike went out of bounds - reset to start");
+        return;
+    }
+    
+    bike->SetPosition(position);
+    bike->SetVelocity(velocity);
 }
 
 void PhysicsEngine::ApplyGravity(Bike* bike, float deltaTime) {

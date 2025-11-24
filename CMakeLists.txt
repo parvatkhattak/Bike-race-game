@@ -12,19 +12,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Add raylib
-set(RAYLIB_VERSION 5.0)
-find_package(raylib ${RAYLIB_VERSION} QUIET)
-
-if (NOT raylib_FOUND)
-    # Download raylib if not found
-    include(FetchContent)
-    FetchContent_Declare(
-        raylib
-        GIT_REPOSITORY https://github.com/raysan5/raylib.git
-        GIT_TAG 5.0
-    )
-    FetchContent_MakeAvailable(raylib)
-endif()
+# Add raylib
+add_subdirectory(external/raylib)
 
 # Source files
 file(GLOB_RECURSE SOURCES 

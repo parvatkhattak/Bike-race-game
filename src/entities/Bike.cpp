@@ -1,6 +1,8 @@
 #include "entities/Bike.h"
 #include "utils/Config.h"
 #include "utils/Logger.h"
+#include "rlgl.h" // For transformation functions
+#include "raymath.h"
 #include <cmath>
 
 Bike::Bike() :
@@ -25,6 +27,10 @@ Bike::Bike() :
     baseStats.weight = 1.0f;
     
     stats = baseStats;
+}
+
+float Bike::GetSpeed() const {
+    return Vector3Length(velocity);
 }
 
 Bike::~Bike() {
@@ -89,7 +95,7 @@ void Bike::UpdateRotation(float deltaTime) {
     // Update direction based on velocity
     if (Vector3Length(velocity) > 0.1f) {
         Vector3 velDir = Vector3Normalize(velocity);
-        direction = Vector3 Lerp(direction, velDir, 0.1f);
+        direction = Vector3Lerp(direction, velDir, 0.1f);
         
         // Calculate rotation angle from direction
         rotation = atan2f(direction.x, direction.z) * RAD2DEG;
@@ -97,20 +103,53 @@ void Bike::UpdateRotation(float deltaTime) {
 }
 
 void Bike::Render() const {
-    if (!modelLoaded) return;
+    // Save current matrix state
+    rlPushMatrix();
     
-    // Calculate rotation matrix
-    Matrix rotationMatrix = MatrixRotateY(rotation * DEG2RAD);
-    Matrix translationMatrix = MatrixTranslate(position.x, position.y, position.z);
-    Matrix transform = MatrixMultiply(rotationMatrix, translationMatrix);
+    // Translate to bike's position
+    rlTranslatef(position.x, position.y, position.z);
     
-    // Draw model
-    DrawModel(model, position, 1.0f, color);
+    // Rotate around Y-axis based on bike's direction
+    rlRotatef(rotation, 0.0f, 1.0f, 0.0f);
+    
+    // Draw bike with wheels and body
+    Vector3 bodyOffset = {0, 0.5f, 0}; // Body is slightly above ground
+    
+    // Main bike body (elongated box)
+    DrawCube(bodyOffset, 0.6f, 0.8f, 2.0f, color);
+    DrawCubeWires(bodyOffset, 0.6f, 0.8f, 2.0f, BLACK);
+    
+    // Seat
+    Vector3 seatOffset = {0, 0.5f + 0.5f, -0.3f};
+    DrawCube(seatOffset, 0.5f, 0.3f, 0.6f, ColorBrightness(color, -0.3f));
+    
+    // Handlebars
+    Vector3 handleOffset = {0, 0.5f + 0.3f, 0.8f};
+    DrawCube(handleOffset, 1.0f, 0.2f, 0.2f, DARKGRAY);
+    
+    // Front wheel
+    Vector3 frontWheelOffset = {0, 0, 1.2f};
+    DrawCylinder(frontWheelOffset, 0.6f, 0.6f, 0.3f, 16, DARKGRAY);
+    DrawCylinderWires(frontWheelOffset, 0.6f, 0.6f, 0.3f, 16, BLACK);
+    
+    // Back wheel  
+    Vector3 backWheelOffset = {0, 0, -1.2f};
+    DrawCylinder(backWheelOffset, 0.6f, 0.6f, 0.3f, 16, DARKGRAY);
+    DrawCylinderWires(backWheelOffset, 0.6f, 0.6f, 0.3f, 16, BLACK);
+    
+    // Restore matrix state
+    rlPopMatrix();
     
     // Draw debug info (velocity vector)
     #ifdef DEBUG
-    Vector3 endPoint = Vector3Add(position, Vector3Scale(velocity, 0.3f));
-    DrawLine3D(position, endPoint, GREEN);
+    Vector3 arrowStart = position;
+    arrowStart.y += 2.5f;
+    Vector3 arrowEnd = Vector3Add(arrowStart, Vector3Scale(direction, 1.5f));
+    DrawLine3D(arrowStart, arrowEnd, color);
+    DrawSphere(arrowEnd, 0.15f, color);
+    
+    Vector3 velEndPoint = Vector3Add(position, Vector3Scale(velocity, 0.3f));
+    DrawLine3D(position, velEndPoint, GREEN);
     #endif
 }
 

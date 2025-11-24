@@ -1,8 +1,11 @@
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
-#include "raylib.h"
 #include <memory>
+#include <string>
+#include <cstdarg>
+#include <cstddef>
+#include "raylib.h"
 
 // Forward declarations
 class InputManager;
@@ -47,8 +50,8 @@ public:
     PhysicsEngine* GetPhysicsEngine() const { return physicsEngine.get(); }
 
 private:
-    GameEngine() = default;
-    ~GameEngine() = default;
+    GameEngine(); // Defined in .cpp
+    ~GameEngine(); // Defined in .cpp to allow incomplete types in unique_ptr
     GameEngine(const GameEngine&) = delete;
     GameEngine& operator=(const GameEngine&) = delete;
 

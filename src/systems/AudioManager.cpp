@@ -41,7 +41,7 @@ void AudioManager::LoadAudio() {
 }
 
 void AudioManager::LoadMusic(const std::string& name, const std::string& filepath) {
-    Music music = LoadMusicStream(filepath.c_str());
+    Music music = ::LoadMusicStream(filepath.c_str());
     if (music.frameCount > 0) {
         musicTracks[name] = music;
         LOG_INFO("Loaded music: " + name);
@@ -51,7 +51,7 @@ void AudioManager::LoadMusic(const std::string& name, const std::string& filepat
 }
 
 void AudioManager::LoadSound(const std::string& name, const std::string& filepath) {
-    Sound sound = LoadSound(filepath.c_str());
+    Sound sound = ::LoadSound(filepath.c_str());
     if (sound.frameCount > 0) {
         soundEffects[name] = sound;
         LOG_INFO("Loaded sound: " + name);
@@ -63,22 +63,22 @@ void AudioManager::LoadSound(const std::string& name, const std::string& filepat
 void AudioManager::Update(float deltaTime) {
     // Update music streaming
     if (musicPlaying) {
-        UpdateMusicStream(currentMusic);
+        ::UpdateMusicStream(currentMusic);
     }
 }
 
 void AudioManager::PlayMusic(const std::string& musicName) {
     // Stop current music if playing
     if (musicPlaying) {
-        StopMusicStream(currentMusic);
+        ::StopMusicStream(currentMusic);
     }
     
     // Find and play new music
     auto it = musicTracks.find(musicName);
     if (it != musicTracks.end()) {
         currentMusic = it->second;
-        SetMusicVolume(currentMusic, musicVolume * masterVolume);
-        PlayMusicStream(currentMusic);
+        ::SetMusicVolume(currentMusic, musicVolume * masterVolume);
+        ::PlayMusicStream(currentMusic);
         musicPlaying = true;
         LOG_INFO("Playing music: " + musicName);
     } else {
@@ -88,7 +88,7 @@ void AudioManager::PlayMusic(const std::string& musicName) {
 
 void AudioManager::StopMusic() {
     if (musicPlaying) {
-        StopMusicStream(currentMusic);
+        ::StopMusicStream(currentMusic);
         musicPlaying = false;
     }
 }
@@ -96,15 +96,15 @@ void AudioManager::StopMusic() {
 void AudioManager::SetMusicVolume(float volume) {
     musicVolume = volume;
     if (musicPlaying) {
-        SetMusicVolume(currentMusic, musicVolume * masterVolume);
+        ::SetMusicVolume(currentMusic, musicVolume * masterVolume);
     }
 }
 
 void AudioManager::PlaySound(const std::string& soundName) {
     auto it = soundEffects.find(soundName);
     if (it != soundEffects.end()) {
-        SetSoundVolume(it->second, soundVolume * masterVolume);
-        PlaySound(it->second);
+        ::SetSoundVolume(it->second, soundVolume * masterVolume);
+        ::PlaySound(it->second);
     } else {
         LOG_WARNING("Sound not found: " + soundName);
     }

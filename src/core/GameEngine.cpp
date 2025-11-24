@@ -8,6 +8,10 @@
 #include "utils/Config.h"
 #include "utils/Logger.h"
 
+GameEngine::GameEngine() : isRunning(false), currentState(GameState::MAIN_MENU), deltaTime(0.0f), accumulator(0.0f) {
+    // Constructor body
+}
+
 void GameEngine::Initialize() {
     LOG_INFO("Initializing window and subsystems...");
 
@@ -52,6 +56,10 @@ void GameEngine::Initialize() {
     LOG_INFO("Game engine initialized successfully");
 }
 
+GameEngine::~GameEngine() {
+    // Destructor defined here so unique_ptr members with incomplete types can be destroyed
+}
+
 void GameEngine::Run() {
     while (isRunning && !WindowShouldClose()) {
         deltaTime = GetFrameTime();
@@ -85,7 +93,7 @@ void GameEngine::Update() {
             
             if (player1 && player1->GetBike()) {
                 uiManager->UpdateHUD(0, 
-                    player1->GetBike()->GetCurrentSpeed(),
+                    player1->GetBike()->GetSpeed(),
                     player1->GetCurrentLap(),
                     levelManager->GetCurrentTrack()->GetRequiredLaps(),
                     player1->GetCurrentLapTime(),
@@ -94,7 +102,7 @@ void GameEngine::Update() {
             
             if (player2 && player2->GetBike()) {
                 uiManager->UpdateHUD(1,
-                    player2->GetBike()->GetCurrentSpeed(),
+                    player2->GetBike()->GetSpeed(),
                     player2->GetCurrentLap(),
                     levelManager->GetCurrentTrack()->GetRequiredLaps(),
                     player2->GetCurrentLapTime(),
