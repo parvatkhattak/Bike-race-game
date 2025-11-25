@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Educational-green.svg)]()
 [![Build](https://img.shields.io/badge/Build-CMake-orange.svg)](https://cmake.org/)
 
-A competitive 3D two-player bike racing game built with **C++17** and **Raylib**, featuring physics-based gameplay, progressive difficulty, and unlockable upgrades.
+A competitive 3D bike racing game built with **C++17** and **Raylib**, featuring an AI opponent, physics-based gameplay, progressive difficulty, and unlockable upgrades.
 
 ![Game Status](https://img.shields.io/badge/Status-Playable-success)
 ![Progress](https://img.shields.io/badge/Progress-Complete-brightgreen)
@@ -14,14 +14,14 @@ A competitive 3D two-player bike racing game built with **C++17** and **Raylib**
 
 ## 🎯 Features
 
-✅ **Two-Player Local Multiplayer** - Race head-to-head with split-screen action  
+✅ **AI Opponent** - Race against an intelligent CPU opponent with adaptive driving  
 ✅ **Physics-Based Movement** - Realistic acceleration, friction, and collision  
 ✅ **3 Racing Tracks** - Beginner, Intermediate, and Advanced difficulty levels  
 ✅ **Progressive Challenge** - Increasingly complex tracks with dynamic obstacles  
 ✅ **Checkpoint System** - Lap counting with sequential checkpoint validation  
 ✅ **Upgrade System** - Unlock speed boosts, better handling, and nitro  
 ✅ **Complete UI** - Menus, HUD with speedometer, lap timer, and position tracking  
-✅ **Gamepad Support** - Full keyboard and gamepad controls for both players  
+✅ **Gamepad Support** - Full keyboard and gamepad controls  
 
 ---
 
@@ -40,19 +40,17 @@ See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
 
 ## 🎮 Controls
 
-### Player 1 (Red Bike)
+### Player (Red Bike)
 - **W** - Accelerate
 - **S** - Brake/Reverse
 - **A** - Turn Left
 - **D** - Turn Right
 - **Left Shift** - Nitro Boost
 
-### Player 2 (Blue Bike)
-- **↑** - Accelerate
-- **↓** - Brake/Reverse
-- **←** - Turn Left
-- **→** - Turn Right
-- **Right Shift** - Nitro Boost
+### AI Opponent (Blue Bike)
+- Controlled automatically by the game AI
+- Follows checkpoints and adjusts speed dynamically
+- Uses nitro strategically on straightaways
 
 ### General
 - **ESC** - Pause/Menu
@@ -66,15 +64,15 @@ See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
 ### Core Systems
 - **GameEngine** - Main game loop, state management, subsystem coordination
 - **PhysicsEngine** - Gravity, friction, drag, collision detection/response
-- **InputManager** - Dual-player keyboard & gamepad handling
-- **CameraManager** - Split-screen follow cameras with smooth interpolation
+- **InputManager** - Keyboard & gamepad handling with AI input integration
+- **CameraManager** - Follow camera with smooth interpolation
 - **UIManager** - Complete menu system and in-game HUD
 - **LevelManager** - Race lifecycle, checkpoint tracking, position calculation
 - **AudioManager** - Music streaming and sound effects (ready for assets)
 
 ### Entities
 - **Bike** - Physics-based vehicle with upgrade system
-- **Player** - Race tracking, statistics, and input processing
+- **Player** - Race tracking, statistics, input processing, and AI control logic
 - **Track** - Procedural track generation with 3 difficulty levels
 - **Checkpoint** - Lap counting with sphere-based detection
 - **Obstacle** - 5 types: Barriers, Moving Platforms, Slow Zones, Speed Boosts, Ramps
@@ -185,7 +183,8 @@ brew install cmake
 
 ## 🔮 Future Enhancements
 
-- [ ] AI opponents
+- [x] AI opponents
+- [ ] Multiple AI difficulty levels
 - [ ] Online multiplayer
 - [ ] Custom 3D bike models
 - [ ] Particle effects (dust, sparks)
