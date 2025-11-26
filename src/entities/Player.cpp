@@ -1,10 +1,11 @@
-```cpp
 #include <string>
 #include <vector>
 #include <memory>
+#include <cmath>
 #include "entities/Player.h"
 #include "core/GameEngine.h"
 #include "utils/Logger.h"
+#include "raymath.h"
 
 Player::Player(int id, const std::string& name) :
     playerID(id),

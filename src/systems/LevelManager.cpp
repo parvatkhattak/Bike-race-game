@@ -28,7 +28,32 @@ void LevelManager::Initialize() {
         players[1]->SetAI(true);
     }
 }
-// ... (LoadLevel implementation remains same) ...
+
+void LevelManager::LoadLevel(int levelID) {
+    currentLevelID = levelID;
+    
+    // Create new track
+    currentTrack = std::make_unique<Track>();
+    
+    // Load appropriate track based on level ID
+    std::string trackName = "track" + std::to_string(levelID);
+    currentTrack->LoadTrack(trackName);
+    
+    // Reset players with starting positions
+    for (auto& player : players) {
+        // Set starting position based on player ID
+        Vector3 startPos = {0.0f, 1.0f, static_cast<float>(-5 - player->GetID() * 3)};
+        Color bikeColor = player->GetID() == 0 ? RED : BLUE;
+        
+        // Initialize player with bike
+        player->Initialize(startPos, bikeColor);
+        
+        // Reset player race stats
+        player->ResetRace();
+    }
+    
+    LOG_INFO("Loaded level " + std::to_string(levelID));
+}
 
 void LevelManager::Update(float deltaTime) {
     if (!currentTrack) return;

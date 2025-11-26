@@ -39,9 +39,7 @@ public:
     Vector3 GetPosition() const { return position; }
     Vector3 GetVelocity() const { return velocity; }
     Vector3 GetDirection() const { return direction; }
-    Vector3 GetDirection() const { return direction; }
     float GetSpeed() const; // Implemented in cpp
-    float GetMaxSpeed() const { return stats.maxSpeed; }
     float GetMaxSpeed() const { return stats.maxSpeed; }
     BikeStats GetStats() const { return stats; }
     Model GetModel() const { return model; }
