@@ -39,10 +39,10 @@ void LevelManager::LoadLevel(int levelID) {
     std::string trackName = "track" + std::to_string(levelID);
     currentTrack->LoadTrack(trackName);
     
-    // Reset players with starting positions
+    // Reset players with starting positions from track
     for (auto& player : players) {
-        // Set starting position based on player ID
-        Vector3 startPos = {0.0f, 1.0f, static_cast<float>(-5 - player->GetID() * 3)};
+        // Get proper spawn point from track
+        Vector3 startPos = currentTrack->GetSpawnPoint(player->GetID());
         Color bikeColor = player->GetID() == 0 ? RED : BLUE;
         
         // Initialize player with bike
@@ -121,13 +121,13 @@ void LevelManager::Update(float deltaTime) {
                 physicsEngine->ApplyPhysics(player->GetBike(), deltaTime);
             }
             
-            // Update camera for both players
-            auto cameraMgr = std::make_unique<CameraManager>();
-            for (auto& player : players) {
-                Vector3 pos = player->GetBike()->GetPosition();
-                Vector3 dir = player->GetBike()->GetDirection();
-                cameraMgr->SetTarget(player->GetID(), pos, dir);
-            }
+            // TODO: Update camera for both players (camera manager recreation causing issues)
+            // auto cameraMgr = std::make_unique<CameraManager>();
+            // for (auto& player : players) {
+            //     Vector3 pos = player->GetBike()->GetPosition();
+            //     Vector3 dir = player->GetBike()->GetDirection();
+            //     cameraMgr->SetTarget(player->GetID(), pos, dir);
+            // }
             break;
         }
             
