@@ -4,6 +4,7 @@
 #include "core/CameraManager.h"
 #include "physics/PhysicsEngine.h"
 #include "utils/Logger.h"
+#include "raymath.h"
 
 LevelManager::LevelManager() :
     raceState(RaceState::NOT_STARTED),
@@ -143,16 +144,31 @@ void LevelManager::Update(float deltaTime) {
 void LevelManager::Render() const {
     if (!currentTrack) return;
     
-    // For split-screen, render twice (simplified version)
-    // In full implementation, would use viewports properly
+    // Create camera that follows Player 1
+    Camera3D camera = { 0 };
     
-    BeginMode3D(*std::make_unique<Camera3D>(Camera3D{
-        {0, 15, -20},
-        {0, 0, 0},
-        {0, 1, 0},
-        45.0f,
-        CAMERA_PERSPECTIVE
-    }));
+    if (!players.empty() && players[0]->GetBike()) {
+        Vector3 bikePos = players[0]->GetBike()->GetPosition();
+        Vector3 bikeDir = players[0]->GetBike()->GetDirection();
+        
+        // Camera position: behind and above the bike
+        Vector3 cameraOffset = {-bikeDir.x * 20.0f, 15.0f, -bikeDir.z * 20.0f};
+        camera.position = Vector3Add(bikePos, cameraOffset);
+        
+        // Look at a point ahead of the bike
+        Vector3 targetOffset = {bikeDir.x * 5.0f, 0.0f, bikeDir.z * 5.0f};
+        camera.target = Vector3Add(bikePos, targetOffset);
+    } else {
+        // Fallback camera position
+        camera.position = {0, 15, -20};
+        camera.target = {0, 0, 0};
+    }
+    
+    camera.up = {0, 1, 0};
+    camera.fovy = 45.0f;
+    camera.projection = CAMERA_PERSPECTIVE;
+    
+    BeginMode3D(camera);
     
     // Render track
     currentTrack->Render();
