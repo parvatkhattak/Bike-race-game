@@ -5,6 +5,7 @@
 #include "physics/PhysicsEngine.h"
 #include "utils/Logger.h"
 #include "raymath.h"
+#include <algorithm>
 
 LevelManager::LevelManager() :
     raceState(RaceState::NOT_STARTED),
@@ -20,13 +21,16 @@ LevelManager::LevelManager() :
 void LevelManager::Initialize() {
     LOG_INFO("LevelManager initialized");
     
-    // Create players
+    // Create 5 players - 1 human + 4 AI opponents
     AddPlayer(0, "Player 1");
-    AddPlayer(1, "CPU"); // Rename to CPU
+    AddPlayer(1, "CPU 1");
+    AddPlayer(2, "CPU 2");
+    AddPlayer(3, "CPU 3");
+    AddPlayer(4, "CPU 4");
     
-    // Set Player 2 as AI
-    if (players.size() > 1) {
-        players[1]->SetAI(true);
+    // Set all except Player 1 as AI
+    for (size_t i = 1; i < players.size(); i++) {
+        players[i]->SetAI(true);
     }
 }
 
@@ -40,22 +44,27 @@ void LevelManager::LoadLevel(int levelID) {
     std::string trackName = "track" + std::to_string(levelID);
     currentTrack->LoadTrack(trackName);
     
-    // Reset players with starting positions from track
-    for (auto& player : players) {
-        // Get proper spawn point from track
-        Vector3 startPos = currentTrack->GetSpawnPoint(player->GetID());
-        Color bikeColor = player->GetID() == 0 ? RED : BLUE;
+    // Reset players with starting grid positions
+    Color bikeColors[] = {RED, BLUE, GREEN, YELLOW, ORANGE};
+    
+    for (size_t i = 0; i < players.size(); i++) {
+        // Create starting grid: spread bikes across X axis
+        float xOffset = (i - 2.0f) * 4.0f; // -8, -4, 0, 4, 8
+        Vector3 baseSpawn = currentTrack->GetSpawnPoint(0); // Get track start
+        Vector3 startPos = {baseSpawn.x + xOffset, baseSpawn.y, baseSpawn.z};
+        
+        Color bikeColor = bikeColors[i % 5];
         
         // Initialize player with bike
-        player->Initialize(startPos, bikeColor);
+        players[i]->Initialize(startPos, bikeColor);
         
         // Reset player race stats
-        player->ResetRace();
+        players[i]->ResetRace();
     }
     
-    // Re-set Player 2 as AI (Initialize/ResetRace don't preserve this flag)
-    if (players.size() > 1) {
-        players[1]->SetAI(true);
+    // Re-set all AI flags (Initialize/ResetRace don't preserve this)
+    for (size_t i = 1; i < players.size(); i++) {
+        players[i]->SetAI(true);
     }
     
     LOG_INFO("Loaded level " + std::to_string(levelID));
@@ -301,26 +310,34 @@ void LevelManager::UpdateRaceProgress(float deltaTime) {
 }
 
 void LevelManager::UpdatePlayerPositions() {
-    // Determine positions based on lap and checkpoints
-    if (players.size() < 2) return;
+    // Determine positions based on lap and checkpoints for all players
+    if (players.empty()) return;
     
-    int pos1 = 1, pos2 = 2;
-    
-    if (players[0]->GetCurrentLap() > players[1]->GetCurrentLap()) {
-        pos1 = 1; pos2 = 2;
-    } else if (players[1]->GetCurrentLap() > players[0]->GetCurrentLap()) {
-        pos1 = 2; pos2 = 1;
-    } else {
-        // Same lap, check checkpoints
-        if (players[0]->GetCheckpointsPassed() >= players[1]->GetCheckpointsPassed()) {
-            pos1 = 1; pos2 = 2;
-        } else {
-            pos1 = 2; pos2 = 1;
-        }
+    // Create a list of player indices sorted by race progress
+    std::vector<int> rankings;
+    for (size_t i = 0; i < players.size(); i++) {
+        rankings.push_back(i);
     }
     
-    players[0]->SetRacePosition(pos1);
-    players[1]->SetRacePosition(pos2);
+    // Sort players by: lap (descending), then checkpoints (descending)
+    std::sort(rankings.begin(), rankings.end(), [this](int a, int b) {
+        int lapA = players[a]->GetCurrentLap();
+        int lapB = players[b]->GetCurrentLap();
+        
+        if (lapA != lapB) {
+            return lapA > lapB; // Higher lap = better position
+        }
+        
+        // Same lap, check checkpoints
+        int cpA = players[a]->GetCheckpointsPassed();
+        int cpB = players[b]->GetCheckpointsPassed();
+        return cpA > cpB; // More checkpoints = better position
+    });
+    
+    // Assign positions based on ranking
+    for (size_t i = 0; i < rankings.size(); i++) {
+        players[rankings[i]]->SetRacePosition(i + 1); // Position 1,2,3,4,5...
+    }
 }
 
 void LevelManager::CheckCheckpoints() {
