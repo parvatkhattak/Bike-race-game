@@ -112,14 +112,14 @@ void Track::CreateAdvancedTrack() {
 }
 
 void Track::LoadTrackModel() {
-    // Create a simple ground plane for the track
-    Mesh planeMesh = GenMeshPlane(100.0f, 100.0f, 1, 1);
+    // Create a larger ground plane for the track (200x200 instead of 100x100)
+    Mesh planeMesh = GenMeshPlane(200.0f, 200.0f, 10, 10);
     trackModel = LoadModelFromMesh(planeMesh);
-    trackModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = ColorAlpha(DARKGREEN, 0.8f);
+    trackModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = DARKGRAY;
     modelLoaded = true;
     
-    trackBounds.min = {-50, 0, -50};
-    trackBounds.max = {50, 5, 50};
+    trackBounds.min = {-100, 0, -100};
+    trackBounds.max = {100, 5, 100};
 }
 
 void Track::Update(float deltaTime) {

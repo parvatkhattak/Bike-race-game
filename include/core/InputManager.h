@@ -56,8 +56,8 @@ private:
         KeyboardKey nitro;
     };
 
-    KeyMapping player1Keys = {KEY_W, KEY_S, KEY_A, KEY_D, KEY_LEFT_SHIFT};
-    KeyMapping player2Keys = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_RIGHT_SHIFT};
+    KeyMapping player1Keys = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT_SHIFT};
+    KeyMapping player2Keys = {KEY_W, KEY_S, KEY_A, KEY_D, KEY_RIGHT_SHIFT};
 };
 
 #endif // INPUTMANAGER_H
