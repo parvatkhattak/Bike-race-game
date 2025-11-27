@@ -52,6 +52,11 @@ void LevelManager::LoadLevel(int levelID) {
         player->ResetRace();
     }
     
+    // Re-set Player 2 as AI (Initialize/ResetRace don't preserve this flag)
+    if (players.size() > 1) {
+        players[1]->SetAI(true);
+    }
+    
     LOG_INFO("Loaded level " + std::to_string(levelID));
 }
 
