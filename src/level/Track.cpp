@@ -31,23 +31,32 @@ bool Track::LoadTrack(const std::string& trackName) {
 void Track::CreateBeginnerTrack() {
     trackData.name = "Beginner Circuit";
     trackData.difficulty = 1;
-    trackData.requiredLaps = 3;
-    trackData.player1SpawnPoint = {-3, 0.5f, -20};
-    trackData.player2SpawnPoint = {3, 0.5f, -20};
-    trackData.spawnDirection = {0, 0, 1};
+    trackData.requiredLaps = 1; // Changed to 1 lap - just reach the finish line
+    trackData.player1SpawnPoint = {0, 0.5f, -80}; // Start far back
+    trackData.player2SpawnPoint = {0, 0.5f, -80};
+    trackData.spawnDirection = {0, 0, 1}; // Face forward
     
-    // Create simple oval track checkpoints
+    // Create straight-line checkpoints leading to finish
     checkpoints.clear();
-    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 20}, 8.0f, 0));
-    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{20, 0.5f, 20}, 8.0f, 1));
-    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{20, 0.5f, -20}, 8.0f, 2));
-    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{-20, 0.5f, -20}, 8.0f, 3));
-    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{-20, 0.5f, 20}, 8.0f, 4));
     
-    // Add a few simple obstacles
+    // Checkpoints every 20 units in a straight line forward
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, -60}, 15.0f, 0));
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, -40}, 15.0f, 1));
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, -20}, 15.0f, 2));
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 0}, 15.0f, 3));
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 20}, 15.0f, 4)); // Intermediate
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 40}, 15.0f, 5)); // Intermediate
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 60}, 15.0f, 6)); // Near finish
+    checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 80}, 20.0f, 7)); // FINISH LINE
+    
+    // Add obstacles along the sides for challenge
     obstacles.clear();
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{10, 1, 0}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-10, 1, 10}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{15, 1, -30}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-15, 1, -10}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{12, 1, 10}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-12, 1, 30}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{10, 0.1f, 50}, ObstacleType::SPEED_BOOST, Vector3{5, 0.1f, 5}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-10, 0.1f, 50}, ObstacleType::SPEED_BOOST, Vector3{5, 0.1f, 5}));
     
     LOG_INFO("Beginner track created with " + std::to_string(checkpoints.size()) + " checkpoints");
 }
@@ -134,25 +143,38 @@ void Track::Render() const {
         DrawModel(trackModel, {0, 0, 0}, 1.0f, WHITE);
     }
     
-    // Draw finish/start line (first checkpoint position)
+    // Draw MASSIVE finish line at the last checkpoint (now the actual finish)
     if (!checkpoints.empty()) {
-        Vector3 finishPos = checkpoints[0]->GetPosition();
+        Vector3 finishPos = checkpoints.back()->GetPosition(); // Last checkpoint is finish
         
-        // Draw a red and white checkered finish line
-        for (int i = -5; i <= 5; i++) {
+        // Draw giant red and white checkered finish line
+        for (int i = -10; i <= 10; i++) {
             Color stripColor = (i % 2 == 0) ? RED : WHITE;
-            DrawCube({finishPos.x + i * 2.0f, 0.1f, finishPos.z}, 2.0f, 0.2f, 8.0f, stripColor);
+            DrawCube({finishPos.x + i * 3.0f, 0.2f, finishPos.z}, 3.0f, 0.4f, 10.0f, stripColor);
         }
         
-        // Draw "START/FINISH" text in 3D space
-        DrawCube({finishPos.x, 3.0f, finishPos.z}, 15.0f, 0.1f, 1.0f, YELLOW);
+        // Draw tall finish line pillars
+        DrawCylinder({finishPos.x - 30.0f, 15.0f, finishPos.z}, 2.0f, 2.0f, 30.0f, 16, Fade(RED, 0.8f));
+        DrawCylinder({finishPos.x + 30.0f, 15.0f, finishPos.z}, 2.0f, 2.0f, 30.0f, 16, Fade(RED, 0.8f));
+        
+        // Giant "FINISH" banner
+        DrawCube({finishPos.x, 30.0f, finishPos.z}, 70.0f, 3.0f, 2.0f, GOLD);
+        DrawCube({finishPos.x, 32.0f, finishPos.z}, 65.0f, 2.0f, 1.5f, RED);
+        
+        // Also draw start line at first checkpoint
+        Vector3 startPos = checkpoints[0]->GetPosition();
+        for (int i = -8; i <= 8; i++) {
+            Color stripColor = (i % 2 == 0) ? GREEN : WHITE;
+            DrawCube({startPos.x + i * 2.5f, 0.1f, startPos.z}, 2.5f, 0.2f, 5.0f, stripColor);
+        }
+        DrawCube({startPos.x, 8.0f, startPos.z}, 40.0f, 2.0f, 1.0f, LIME);
     }
     
-    // Render all checkpoints (semi-transparent pillars)
-    for (const auto& checkpoint : checkpoints) {
-        Vector3 pos = checkpoint->GetPosition();
-        DrawCylinderWires(pos, 8.0f, 8.0f, 10.0f, 16, BLUE);
-        DrawCylinder({pos.x, 5.0f, pos.z}, 0.5f, 0.5f, 10.0f, 8, ColorAlpha(SKYBLUE, 0.3f));
+    // Render intermediate checkpoints (semi-transparent)
+    for (size_t i = 1; i < checkpoints.size() - 1; i++) {
+        Vector3 pos = checkpoints[i]->GetPosition();
+        DrawCylinderWires(pos, 15.0f, 15.0f, 8.0f, 16, SKYBLUE);
+        DrawCylinder({pos.x, 4.0f, pos.z}, 0.8f, 0.8f, 8.0f, 8, ColorAlpha(SKYBLUE, 0.2f));
     }
     
     // Render obstacles
