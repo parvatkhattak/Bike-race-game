@@ -134,6 +134,27 @@ void Track::Render() const {
         DrawModel(trackModel, {0, 0, 0}, 1.0f, WHITE);
     }
     
+    // Draw finish/start line (first checkpoint position)
+    if (!checkpoints.empty()) {
+        Vector3 finishPos = checkpoints[0]->GetPosition();
+        
+        // Draw a red and white checkered finish line
+        for (int i = -5; i <= 5; i++) {
+            Color stripColor = (i % 2 == 0) ? RED : WHITE;
+            DrawCube({finishPos.x + i * 2.0f, 0.1f, finishPos.z}, 2.0f, 0.2f, 8.0f, stripColor);
+        }
+        
+        // Draw "START/FINISH" text in 3D space
+        DrawCube({finishPos.x, 3.0f, finishPos.z}, 15.0f, 0.1f, 1.0f, YELLOW);
+    }
+    
+    // Render all checkpoints (semi-transparent pillars)
+    for (const auto& checkpoint : checkpoints) {
+        Vector3 pos = checkpoint->GetPosition();
+        DrawCylinderWires(pos, 8.0f, 8.0f, 10.0f, 16, BLUE);
+        DrawCylinder({pos.x, 5.0f, pos.z}, 0.5f, 0.5f, 10.0f, 8, ColorAlpha(SKYBLUE, 0.3f));
+    }
+    
     // Render obstacles
     for (const auto& obstacle : obstacles) {
         obstacle->Render();
