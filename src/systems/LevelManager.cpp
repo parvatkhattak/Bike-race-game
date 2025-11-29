@@ -363,17 +363,39 @@ void LevelManager::CheckCheckpoints() {
 void LevelManager::CheckCollisions() {
     auto physicsEngine = GameEngine::GetInstance().GetPhysicsEngine();
     
-    // Check bike-to-bike collision
-    if (players.size() >= 2) {
-        physicsEngine->ResolveCollision(players[0]->GetBike(), players[1]->GetBike());
+    // Check ALL bike-to-bike collisions (every pair)
+    for (size_t i = 0; i < players.size(); i++) {
+        for (size_t j = i + 1; j < players.size(); j++) {
+            if (players[i]->GetBike() && players[j]->GetBike()) {
+                physicsEngine->ResolveCollision(players[i]->GetBike(), players[j]->GetBike());
+            }
+        }
     }
     
     // Check bike-obstacle collisions
+    if (!currentTrack) return;
+    
     for (auto& player : players) {
+        if (!player->GetBike()) continue;
+        
+        Vector3 bikePos = player->GetBike()->GetPosition();
+        const float BIKE_COLLISION_RADIUS = 2.0f;
+        
         for (const auto& obstacle : currentTrack->GetObstacles()) {
-            Vector3 bikePos = player->GetBike()->GetPosition();
-            if (obstacle->CheckCollision(bikePos, 2.0f)) {
+            if (obstacle->CheckCollision(bikePos, BIKE_COLLISION_RADIUS)) {
+                // Apply obstacle effect
                 obstacle->ApplyEffect(player->GetBike());
+                
+                // For barriers, also apply collision response
+                if (obstacle->GetType() == ObstacleType::STATIC_BARRIER) {
+                    // Push bike away from obstacle
+                    Vector3 pushDirection = Vector3Subtract(bikePos, obstacle->GetPosition());
+                    pushDirection.y = 0; // Keep on ground
+                    pushDirection = Vector3Normalize(pushDirection);
+                    
+                    Vector3 pushForce = Vector3Scale(pushDirection, 500.0f);
+                    player->GetBike()->ApplyForce(pushForce);
+                }
             }
         }
     }
