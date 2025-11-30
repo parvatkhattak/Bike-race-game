@@ -27,11 +27,21 @@ A competitive 3D bike racing game built with **C++17** and **Raylib**, featuring
 
 ## 🚀 Quick Start
 
-### One-Command Installation & Run
+### Single Command to Run
+```bash
+bash quick_build.sh
+```
+
+This command will:
+- Download and build Raylib 5.0
+- Compile the game
+- Launch the game automatically
+
+**First time setup?** Clone the repository first:
 ```bash
 git clone https://github.com/parvatkhattak/Bike-race-game.git
 cd Bike-race-game
-./install_and_run.sh
+bash quick_build.sh
 ```
 
 See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
@@ -75,7 +85,7 @@ See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
 - **Player** - Race tracking, statistics, input processing, and AI control logic
 - **Track** - Procedural track generation with 3 difficulty levels
 - **Checkpoint** - Lap counting with sphere-based detection
-- **Obstacle** - 5 types: Barriers, Moving Platforms, Slow Zones, Speed Boosts, Ramps
+- **Obstacle** - 3 solid types: Static Barriers, Moving Platforms, Ramps
 
 ---
 
