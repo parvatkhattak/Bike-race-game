@@ -7,8 +7,6 @@
 enum class ObstacleType {
     STATIC_BARRIER,
     MOVING_PLATFORM,
-    SLOW_ZONE,
-    SPEED_BOOST,
     RAMP
 };
 

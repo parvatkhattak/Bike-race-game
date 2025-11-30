@@ -383,18 +383,28 @@ void LevelManager::CheckCollisions() {
         
         for (const auto& obstacle : currentTrack->GetObstacles()) {
             if (obstacle->CheckCollision(bikePos, BIKE_COLLISION_RADIUS)) {
-                // Apply obstacle effect
+                // Apply obstacle effect (currently none for solid obstacles)
                 obstacle->ApplyEffect(player->GetBike());
                 
-                // For barriers, also apply collision response
-                if (obstacle->GetType() == ObstacleType::STATIC_BARRIER) {
-                    // Push bike away from obstacle
-                    Vector3 pushDirection = Vector3Subtract(bikePos, obstacle->GetPosition());
-                    pushDirection.y = 0; // Keep on ground
+                // Apply proper collision response for all solid obstacles
+                ObstacleType obstacleType = obstacle->GetType();
+                
+                // Calculate push direction away from obstacle
+                Vector3 pushDirection = Vector3Subtract(bikePos, obstacle->GetPosition());
+                pushDirection.y = 0; // Keep on ground
+                
+                float distance = Vector3Length(pushDirection);
+                if (distance > 0.01f) {
                     pushDirection = Vector3Normalize(pushDirection);
                     
-                    Vector3 pushForce = Vector3Scale(pushDirection, 500.0f);
+                    // Push bike away from obstacle
+                    float pushStrength = 800.0f; // Increased from 500.0f for stronger collision
+                    Vector3 pushForce = Vector3Scale(pushDirection, pushStrength);
                     player->GetBike()->ApplyForce(pushForce);
+                    
+                    // Reduce velocity on collision for realistic bounce
+                    Vector3 currentVel = player->GetBike()->GetVelocity();
+                    player->GetBike()->SetVelocity(Vector3Scale(currentVel, 0.6f));
                 }
             }
         }

@@ -38,12 +38,6 @@ void Obstacle::LoadModel() {
         case ObstacleType::MOVING_PLATFORM:
             mesh = GenMeshCube(size.x, size.y, size.z);
             break;
-        case ObstacleType::SLOW_ZONE:
-            mesh = GenMeshPlane(size.x, size.z, 1, 1);
-            break;
-        case ObstacleType::SPEED_BOOST:
-            mesh = GenMeshPlane(size.x, size.z, 1, 1);
-            break;
         case ObstacleType::RAMP:
             mesh = GenMeshCube(size.x, size.y, size.z);
             break;
@@ -56,8 +50,6 @@ void Obstacle::LoadModel() {
     switch (type) {
         case ObstacleType::STATIC_BARRIER: color = RED; break;
         case ObstacleType::MOVING_PLATFORM: color = ORANGE; break;
-        case ObstacleType::SLOW_ZONE: color = BLUE; break;
-        case ObstacleType::SPEED_BOOST: color = YELLOW; break;
         case ObstacleType::RAMP: color = BROWN; break;
     }
     
@@ -110,22 +102,6 @@ bool Obstacle::CheckCollision(Vector3 bikePosition, float bikeRadius) const {
 void Obstacle::ApplyEffect(Bike* bike) const {
     if (!bike) return;
     
-    switch (type) {
-        case ObstacleType::SLOW_ZONE:
-            // Apply slow effect
-            bike->ApplyForce({0, 0, 0});
-            bike->SetVelocity(Vector3Scale(bike->GetVelocity(), 0.5f));
-            break;
-            
-        case ObstacleType::SPEED_BOOST:
-            // Apply speed boost
-            bike->ApplySpeedBoost(1.5f, 1.0f);
-            break;
-            
-        case ObstacleType::STATIC_BARRIER:
-        case ObstacleType::MOVING_PLATFORM:
-        case ObstacleType::RAMP:
-            // Collision handled by physics engine
-            break;
-    }
+    // All remaining obstacles are solid - collision handled by physics engine
+    // No special effects applied
 }
