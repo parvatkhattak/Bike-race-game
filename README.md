@@ -47,7 +47,7 @@ bash quick_build.sh
 ### If Already Built - Just Run the Game
 ```bash
 cd build
-./bin/BikeRaceGame
+./BikeRaceGame
 ```
 
 See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
