@@ -167,13 +167,6 @@ void Track::Render() const {
         DrawCube({startPos.x, 8.0f, startPos.z}, 40.0f, 2.0f, 1.0f, LIME);
     }
     
-    // Render intermediate checkpoints (semi-transparent)
-    for (size_t i = 1; i < checkpoints.size() - 1; i++) {
-        Vector3 pos = checkpoints[i]->GetPosition();
-        DrawCylinderWires(pos, 15.0f, 15.0f, 8.0f, 16, SKYBLUE);
-        DrawCylinder({pos.x, 4.0f, pos.z}, 0.8f, 0.8f, 8.0f, 8, ColorAlpha(SKYBLUE, 0.2f));
-    }
-    
     // Render obstacles
     for (const auto& obstacle : obstacles) {
         obstacle->Render();
