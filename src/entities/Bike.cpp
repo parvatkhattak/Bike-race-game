@@ -95,7 +95,7 @@ void Bike::UpdateRotation(float deltaTime) {
     // Update direction based on velocity
     if (Vector3Length(velocity) > 0.1f) {
         Vector3 velDir = Vector3Normalize(velocity);
-        direction = Vector3Lerp(direction, velDir, 0.1f);
+        direction = Vector3Lerp(direction, velDir, 0.15f); // Increased for smoother rotation
         
         // Calculate rotation angle from direction
         rotation = atan2f(direction.x, direction.z) * RAD2DEG;

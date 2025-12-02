@@ -23,7 +23,7 @@ namespace Config {
     // Bike Default Stats
     constexpr float BIKE_BASE_SPEED = 50.0f;
     constexpr float BIKE_BASE_ACCELERATION = 22.0f;  // Increased for more responsive acceleration
-    constexpr float BIKE_BASE_TURN_RATE = 180.0f;     // Increased for sharper, more responsive turning
+    constexpr float BIKE_BASE_TURN_RATE = 150.0f;     // Balanced for responsive yet smooth turning
     constexpr float BIKE_BASE_BRAKE_FORCE = 32.0f;    // Increased for stronger braking power
 
     // Camera Settings
