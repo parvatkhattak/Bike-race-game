@@ -183,9 +183,9 @@ void PhysicsEngine::ResolveCollision(Bike* bike1, Bike* bike2) {
             float separatingVelocity = Vector3DotProduct(relativeVel, normal);
             
             if (separatingVelocity < 0) {
-                float restitution = 0.5f; // Bounciness
+                float restitution = 0.7f; // Bounciness - increased for more elastic collisions
                 float impulse = (-1 - restitution) * separatingVelocity;
-                Vector3 impulseVector = Vector3Scale(normal, impulse * 0.5f);
+                Vector3 impulseVector = Vector3Scale(normal, impulse * 0.8f); // Stronger impulse transfer
                 
                 bike1->SetVelocity(Vector3Add(vel1, impulseVector));
                 bike2->SetVelocity(Vector3Subtract(vel2, impulseVector));
@@ -215,7 +215,7 @@ void PhysicsEngine::ResolveStaticCollision(Bike* bike, Collider staticCollider) 
         float velInNormal = Vector3DotProduct(vel, normal);
         if (velInNormal < 0) {
             Vector3 tangentVel = Vector3Subtract(vel, Vector3Scale(normal, velInNormal));
-            bike->SetVelocity(Vector3Scale(tangentVel, 0.7f)); // Lose some speed
+            bike->SetVelocity(Vector3Scale(tangentVel, 0.85f)); // Preserve more momentum for natural feel
         }
     }
 }
