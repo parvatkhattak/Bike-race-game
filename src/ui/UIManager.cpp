@@ -48,12 +48,19 @@ void UIManager::Update(float deltaTime) {
                     SetState(UIState::LEVEL_SELECT);
                     break;
                     
-                case UIState::LEVEL_SELECT:
+                case UIState::LEVEL_SELECT: {
                     // Start game
                     auto& levelMgr = *GameEngine::GetInstance().GetLevelManager();
                     levelMgr.LoadLevel(selectedMenuOption + 1);
                     levelMgr.StartRace();
                     GameEngine::GetInstance().SetState(GameState::PLAYING);
+                    break;
+                }
+                    
+                case UIState::GAME_OVER:
+                    // Return to main menu and reset
+                    SetState(UIState::MAIN_MENU);
+                    GameEngine::GetInstance().SetState(GameState::MAIN_MENU);
                     break;
             }
         }
