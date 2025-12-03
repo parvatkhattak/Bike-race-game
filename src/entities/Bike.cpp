@@ -95,7 +95,7 @@ void Bike::UpdateRotation(float deltaTime) {
     // Update direction based on velocity
     if (Vector3Length(velocity) > 0.1f) {
         Vector3 velDir = Vector3Normalize(velocity);
-        direction = Vector3Lerp(direction, velDir, 0.15f); // Increased for smoother rotation
+        direction = Vector3Lerp(direction, velDir, 0.12f); // Balanced smoothing for natural feel
         
         // Calculate rotation angle from direction
         rotation = atan2f(direction.x, direction.z) * RAD2DEG;
@@ -176,24 +176,22 @@ void Bike::Turn(float direction) {
     if (fabsf(direction) < 0.01f) return;
     
     float currentSpeed = Vector3Length(velocity);
-    if (currentSpeed < 1.0f) return; // Can't turn if not moving
+    if (currentSpeed < 0.3f) return; // Allow turning at very low speeds for better control
     
-    // Turn rate affected by speed and handling
-    float speedFactor = fminf(currentSpeed / stats.maxSpeed, 1.0f);
-    float turnAmount = direction * stats.turnRate * speedFactor * stats.handling * GetFrameTime();
+    // Consistent turn rate regardless of speed for predictable handling
+    // Small speed influence keeps it realistic but doesn't cause randomness
+    float speedInfluence = fminf(currentSpeed / 10.0f, 1.0f); // Gentle speed influence
+    float turnAmount = direction * stats.turnRate * speedInfluence * stats.handling * GetFrameTime();
     
-    // Rotate direction vector
+    // Rotate direction vector smoothly
     float angleRad = turnAmount * DEG2RAD;
     float newX = this->direction.x * cosf(angleRad) + this->direction.z * sinf(angleRad);
     float newZ = -this->direction.x * sinf(angleRad) + this->direction.z * cosf(angleRad);
     
     this->direction = Vector3Normalize({newX, 0, newZ});
     
-    // Also rotate velocity for immediate turn response
-    float velX = velocity.x * cosf(angleRad) + velocity.z * sinf(angleRad);
-    float velZ = -velocity.x * sinf(angleRad) + velocity.z * cosf(angleRad);
-    velocity.x = velX;
-    velocity.z = velZ;
+    // Let physics naturally adjust velocity based on direction
+    // Removed immediate velocity rotation for more natural, predictable feel
 }
 
 void Bike::ApplyForce(Vector3 force) {
