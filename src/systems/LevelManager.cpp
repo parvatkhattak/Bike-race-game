@@ -6,6 +6,7 @@
 #include "utils/Logger.h"
 #include "raymath.h"
 #include <algorithm>
+#include <random>
 
 LevelManager::LevelManager() :
     raceState(RaceState::NOT_STARTED),
@@ -44,12 +45,19 @@ void LevelManager::LoadLevel(int levelID) {
     std::string trackName = "track" + std::to_string(levelID);
     currentTrack->LoadTrack(trackName);
     
-    // Reset players with starting grid positions
+    // Reset players with randomized starting grid positions
     Color bikeColors[] = {RED, BLUE, GREEN, YELLOW, ORANGE};
     
+    // Create shuffled grid positions for randomization
+    std::vector<int> gridPositions = {0, 1, 2, 3, 4};
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(gridPositions.begin(), gridPositions.end(), g);
+    
     for (size_t i = 0; i < players.size(); i++) {
-        // Create starting grid: spread bikes across X axis
-        float xOffset = (i - 2.0f) * 4.0f; // -8, -4, 0, 4, 8
+        // Use randomized grid position instead of player index
+        int gridSlot = gridPositions[i];
+        float xOffset = (gridSlot - 2.0f) * 4.0f; // -8, -4, 0, 4, 8
         Vector3 baseSpawn = currentTrack->GetSpawnPoint(0); // Get track start
         Vector3 startPos = {baseSpawn.x + xOffset, baseSpawn.y, baseSpawn.z};
         
