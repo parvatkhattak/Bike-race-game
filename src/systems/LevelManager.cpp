@@ -73,10 +73,6 @@ void LevelManager::LoadLevel(int levelID, int playerBikeIndex) {
         // Initialize player with bike
         players[i]->Initialize(startPos, bikeColor);
         
-        // CRITICAL: Set all bikes facing FORWARD (toward finish)
-        players[i]->GetBike()->SetDirection({0, 0, 1}); // Face forward along Z axis
-        players[i]->GetBike()->SetVelocity({0, 0, 0});  // Start from standstill
-        
         // Reset player race stats
         players[i]->ResetRace();
     }
@@ -88,7 +84,7 @@ void LevelManager::LoadLevel(int levelID, int playerBikeIndex) {
     }
     
     std::string bikeChoice = (playerBikeIndex == 0) ? "RED" : "BLUE";
-    LOG_INFO("Loaded level " + std::to_string(levelID) + " - Player chose " + bikeChoice + " bike - All bikes facing forward");
+    LOG_INFO("Loaded level " + std::to_string(levelID) + " - Player chose " + bikeChoice + " bike");
 }
 
 void LevelManager::Update(float deltaTime) {

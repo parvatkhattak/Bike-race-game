@@ -49,6 +49,8 @@ public:
     void SetPosition(Vector3 pos) { position = pos; }
     void SetVelocity(Vector3 vel) { velocity = vel; }
     void SetRotation(float angle) { rotation = angle; }
+    void SetDirection(Vector3 dir); // Implemented in cpp
+    void SetStats(const BikeStats& newStats) { stats = newStats; }
 
     // State
     bool IsOnGround() const { return onGround; }

@@ -58,6 +58,10 @@ void Bike::LoadModel() {
     modelLoaded = true;
 }
 
+void Bike::SetDirection(Vector3 dir) {
+    direction = Vector3Normalize(dir);
+}
+
 void Bike::Update(float deltaTime) {
     UpdatePhysics(deltaTime);
     UpdateRotation(deltaTime);

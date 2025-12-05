@@ -31,6 +31,10 @@ compile_commands.json
 CTestTestfile.cmake
 _deps/
 
+# External dependencies (downloaded during build)
+external/raylib/
+external/*.tar.gz*
+
 # User-specific files
 *.user
 *.suo
@@ -40,6 +44,9 @@ _deps/
 # Logs
 *.log
 
-# Save files (during development)
+# Save files
 *.sav
 playerdata.json
+
+# Antigravity brain files
+.gemini/
