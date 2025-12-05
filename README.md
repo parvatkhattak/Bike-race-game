@@ -1,122 +1,54 @@
-# 🎮 3D Bike Race Game
+# �️ Bike Race Game
 
-[![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
-[![Raylib](https://img.shields.io/badge/Raylib-5.0-red.svg)](https://www.raylib.com/)
-[![License](https://img.shields.io/badge/License-Educational-green.svg)]()
-[![Build](https://img.shields.io/badge/Build-CMake-orange.svg)](https://cmake.org/)
+<div align="center">
 
-A competitive 3D bike racing game built with **C++17** and **Raylib**, featuring an AI opponent, physics-based gameplay, progressive difficulty, and unlockable upgrades.
+![C++](https://img.shields.io/badge/C++-17-blue.svg)
+![Raylib](https://img.shields.io/badge/Raylib-5.0-red.svg)
+![License](https://img.shields.io/badge/License-Educational-green.svg)
+![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey.svg)
 
-![Game Status](https://img.shields.io/badge/Status-Playable-success)
-![Progress](https://img.shields.io/badge/Progress-Complete-brightgreen)
+**A high-performance 3D motorcycle racing game built with C++ and Raylib**
+
+*Featuring AI opponents, bike selection, difficulty scaling, and competitive racing!*
+
+</div>
 
 ---
 
-## 🎯 Features
+## 🎮 Features
 
-✅ **AI Opponent** - Race against an intelligent CPU opponent with adaptive driving  
-✅ **Physics-Based Movement** - Realistic acceleration, friction, and collision  
-✅ **3 Racing Tracks** - Beginner, Intermediate, and Advanced difficulty levels  
-✅ **Progressive Challenge** - Increasingly complex tracks with dynamic obstacles  
-✅ **Checkpoint System** - Lap counting with sequential checkpoint validation  
-✅ **Upgrade System** - Unlock speed boosts, better handling, and nitro  
-✅ **Complete UI** - Menus, HUD with speedometer, lap timer, and position tracking  
-✅ **Gamepad Support** - Full keyboard and gamepad controls  
+### Core Gameplay
+- **🏁 Competitive Racing**: Race against 4 AI opponents on 3 different tracks
+- **🏍️ Bike Selection**: Choose between Red or Blue bike at race start
+- **🎯 Arrow Key Controls**: Your selected bike is always controlled by arrow keys
+- **⚡ Nitro Boost System**: Strategic speed boosts for overtaking
+- **� 3 Difficulty Levels**: Easy, Medium, and Hard tracks with scaling challenge
+
+### AI & Difficulty
+- **🤖 Intelligent AI**: CPU opponents race competitively toward checkpoints
+- **📈 Difficulty Scaling**: 
+  - **Level 1 (Easy)**: 90% AI power, 3 obstacles, gentler competition
+  - **Level 2 (Medium)**: 105% AI power, 6 obstacles, balanced challenge
+  - **Level 3 (Hard)**: 120% AI power, 12 obstacles, maximum challenge
+- **🎲 Randomized Starts**: Starting positions shuffled each race for fairness
+
+### Physics & Controls
+- **🔄 Smooth Physics**: Custom physics engine with gravity, friction, and drag
+- **💥 Dynamic Collisions**: Bike-to-bike and bike-to-obstacle interactions
+- **🎛️ Responsive Controls**: Optimized turn rate, acceleration, and braking
+- **🚀 Reduced Collision Sensitivity**: Stable, non-bouncy collisions
+
+### Visual & UI
+- **🎨 Dark Gradient UI**: Professional, consistent interface throughout
+- **📊 In-Game HUD**: Real-time speed, position, lap times, and nitro meter
+- **🏆 Results Screen**: Detailed race results and points awarded
+- **🎯 Clear Checkpoints**: Visual checkpoint markers to guide racing
 
 ---
 
 ## 🚀 Quick Start
 
-### Single Command to Run
-```bash
-bash quick_build.sh
-```
-
-This command will:
-- Download and build Raylib 5.0
-- Compile the game
-- Launch the game automatically
-
-**First time setup?** Clone the repository first:
-```bash
-git clone https://github.com/parvatkhattak/Bike-race-game.git
-cd Bike-race-game
-bash quick_build.sh
-```
-
-### If Already Built - Just Run the Game
-```bash
-cd build
-./BikeRaceGame
-```
-
-See **[QUICKSTART.md](QUICKSTART.md)** for detailed instructions.
-
----
-
-## 🎮 Controls
-
-### Player (Red Bike)
-- **W** - Accelerate
-- **S** - Brake/Reverse
-- **A** - Turn Left
-- **D** - Turn Right
-- **Left Shift** - Nitro Boost
-
-### AI Opponent (Blue Bike)
-- Controlled automatically by the game AI
-- Follows checkpoints and adjusts speed dynamically
-- Uses nitro strategically on straightaways
-
-### General
-- **ESC** - Pause/Menu
-- **ENTER** - Confirm
-- **Arrow Keys** - Navigate Menus
-
----
-
-## 🏗️ Architecture
-
-### Core Systems
-- **GameEngine** - Main game loop, state management, subsystem coordination
-- **PhysicsEngine** - Gravity, friction, drag, collision detection/response
-- **InputManager** - Keyboard & gamepad handling with AI input integration
-- **CameraManager** - Follow camera with smooth interpolation
-- **UIManager** - Complete menu system and in-game HUD
-- **LevelManager** - Race lifecycle, checkpoint tracking, position calculation
-- **AudioManager** - Music streaming and sound effects (ready for assets)
-
-### Entities
-- **Bike** - Physics-based vehicle with upgrade system
-- **Player** - Race tracking, statistics, input processing, and AI control logic
-- **Track** - Procedural track generation with 3 difficulty levels
-- **Checkpoint** - Lap counting with sphere-based detection
-- **Obstacle** - 3 solid types: Static Barriers, Moving Platforms, Ramps
-
----
-
-## 📦 Project Structure
-
-```
-Bike-race-game/
-├── CMakeLists.txt              # Build configuration
-├── README.md                   # This file
-├── QUICKSTART.md               # Installation guide
-├── src/                        # Source code (~2000+ lines)
-│   ├── main.cpp
-│   ├── core/                   # Game engine, input, camera
-│   ├── entities/               # Player, bike
-│   ├── physics/                # Physics simulation
-│   ├── level/                  # Tracks, checkpoints, obstacles
-│   ├── ui/                     # User interface
-│   └── systems/                # Level manager, audio
-├── include/                    # Header files
-└── assets/                     # Game assets (models, audio, textures)
-```
-
----
-
-## 🛠️ Build Requirements
+### Prerequisites
 
 - **C++17** compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
 - **CMake 3.20+**
@@ -139,71 +71,180 @@ brew install cmake
 - Visual Studio 2019+ or MinGW-w64
 - CMake from [cmake.org](https://cmake.org/download/)
 
+### Build & Run
+
+#### First Time Setup (Recommended)
+```bash
+# Clone the repository
+git clone https://github.com/parvatkhattak/Bike-race-game.git
+cd Bike-race-game
+
+# Quick build script (builds and runs)
+chmod +x quick_build.sh
+./quick_build.sh
+```
+
+#### Manual Build
+```bash
+# Create build directory
+mkdir -p build && cd build
+
+# Configure and build
+cmake ..
+cmake --build .
+
+# Run the game
+./BikeRaceGame
+```
+
+#### If Already Built - Just Run the Game
+```bash
+cd Bike-race-game
+./build/BikeRaceGame
+```
+
 ---
 
-## 🎓 Technical Highlights
+## 🎮 Controls
 
-### Object-Oriented Design
-- **Design Patterns**: Singleton (GameEngine, Logger), Composition, Polymorphism
-- **Memory Management**: `std::unique_ptr` for automatic resource cleanup
-- **Modern C++**: Lambda functions, range-based loops, STL containers
+### Menu Navigation
+- **↑↓ Arrow Keys** - Navigate menus
+- **ENTER** - Confirm selection
+- **ESC** - Pause/Back to menu
 
-### Game Development Concepts
-- **Fixed Timestep Game Loop** (60 FPS)
-- **State Machine** for game states
-- **Component-Based Architecture**
-- **Event-Driven UI** with callbacks
-- **Physics Simulation**: Euler integration, impulse-based collision
+### Racing Controls
+- **↑ Arrow** - Accelerate
+- **↓ Arrow** - Brake/Reverse
+- **← Arrow** - Turn Left
+- **→ Arrow** - Turn Right
+- **Left Shift** - Nitro Boost
+- **ESC** - Pause Race
 
-### Code Quality
-- **~2000+ lines** of organized C++ code
-- **15+ classes** following SOLID principles
-- **Modular subsystems** with clear interfaces
-- **Comprehensive documentation**
+> **Note:** Your selected bike (red or blue) is always controlled by arrow keys!
+
+### AI Opponents
+- Controlled automatically by intelligent AI
+- Follow checkpoints and race competitively
+- Use nitro strategically
+- Difficulty scales with track level
+
+---
+
+## 🏗️ Architecture
+
+### Core Systems
+- **GameEngine** - Main loop, state management, subsystem coordination
+- **PhysicsEngine** - Gravity, friction, drag, collision detection/response
+- **InputManager** - Keyboard & gamepad handling
+- **CameraManager** - Follow camera with smooth interpolation
+- **UIManager** - Menu system, bike selection, and in-game HUD
+- **LevelManager** - Race lifecycle, checkpoint tracking, position calculation
+- **AudioManager** - Music streaming and sound effects (ready for assets)
+
+### Entities
+- **Bike** - Physics-based vehicle with custom controls
+- **Player** - Race tracking, statistics, and AI control logic
+- **Track** - Procedural track generation with 3 difficulty levels
+- **Checkpoint** - Lap counting with sphere-based detection
+- **Obstacle** - Static barriers, moving platforms, and ramps
+
+---
+
+## 📦 Project Structure
+
+```
+Bike-race-game/
+├── CMakeLists.txt              # Build configuration
+├── README.md                   # This file
+├── QUICKSTART.md               # Quick installation guide
+├── quick_build.sh              # One-command build script
+├── src/                        # Source code (~2500+ lines)
+│   ├── main.cpp
+│   ├── core/                   # Game engine, input, camera
+│   ├── entities/               # Player, bike
+│   ├── physics/                # Physics simulation
+│   ├── level/                  # Tracks, checkpoints, obstacles
+│   ├── ui/                     # User interface
+│   └── systems/                # Level manager, audio
+├── include/                    # Header files
+└── assets/                     # Game assets (models, audio, textures)
+```
 
 ---
 
 ## 🎯 Game Modes
 
-### 1. Beginner Circuit
+### 1. Beginner Circuit (Level 1)
 - **Difficulty**: Easy
-- **Layout**: Simple oval track
-- **Checkpoints**: 5
-- **Obstacles**: Few static barriers
-- **Perfect for**: Learning controls
+- **AI Strength**: 90% power
+- **Obstacles**: 3 (2 barriers, 1 ramp)
+- **Perfect for**: Learning controls and mechanics
 
-### 2. Intermediate Track
+### 2. Intermediate Track (Level 2)
 - **Difficulty**: Medium
-- **Layout**: Complex hexagon
-- **Checkpoints**: 6
-- **Obstacles**: Moving platforms, speed boost zones
-- **Perfect for**: Improving skills
+- **AI Strength**: 105% power
+- **Obstacles**: 6 (4 barriers, 1 moving platform, 1 ramp)
+- **Perfect for**: Competitive racing
 
-### 3. Advanced Track
+### 3. Advanced Track (Level 3)
 - **Difficulty**: Hard
-- **Layout**: Figure-8 with sharp turns
-- **Checkpoints**: 7
-- **Obstacles**: Many hazards, slow zones
-- **Perfect for**: Expert racers
+- **AI Strength**: 120% power
+- **Obstacles**: 12 (10 barriers, 1 moving platform, 1 ramp)
+- **Perfect for**: Expert racers seeking maximum challenge
 
 ---
 
-## 📈 Progression System
+## 🎓 Technical Highlights
 
-- 🏆 **Complete races** to unlock harder tracks
-- ⭐ **Earn points** based on position (100 for 1st, 50 for 2nd)
-- 🚀 **Track best lap times**
-- 🔓 **Unlock upgrades**: Speed, Acceleration, Handling, Nitro
+### Object-Oriented Design
+- **Design Patterns**: Singleton (GameEngine, Logger), Composition
+- **Memory Management**: `std::unique_ptr` for automatic resource cleanup
+- **Modern C++**: Lambda functions, range-based loops, STL containers
+
+### Game Development Concepts
+- **Fixed Timestep Game Loop** (60 FPS)
+- **State Machine** for game states (Menu, Race, Game Over)
+- **Component-Based Architecture**
+- **Event-Driven UI** with callbacks
+- **Physics Simulation**: Euler integration, impulse-based collision
+
+### AI Implementation
+- **Simplified Racing AI**: Full throttle with gentle steering corrections
+- **Checkpoint Targeting**: AI tracks progress and targets next checkpoint
+- **Difficulty Scaling**: AI parameters adjust based on level (1-3)
+- **Strategic Nitro**: Frequency-based boost usage
+
+### Code Quality
+- **~2500+ lines** of organized C++ code
+- **15+ classes** following SOLID principles
+- **Modular subsystems** with clear interfaces
+- **Comprehensive documentation**
+- **Clean .gitignore** (excludes build artifacts)
+
+---
+
+## 📈 Recent Updates
+
+### Latest Features (v1.0)
+- ✅ **Bike Selection**: Choose red or blue bike before each race
+- ✅ **AI Difficulty Scaling**: Easy/Medium/Hard AI based on track level
+- ✅ **Obstacle Scaling**: 3x, 6x, 12x obstacles for progressive difficulty
+- ✅ **Improved AI Navigation**: CPUs race competitively toward finish
+- ✅ **Dark Gradient UI**: Professional interface across all screens
+- ✅ **Randomized Starts**: Fair starting positions each race
+- ✅ **Explicit Direction Init**: All bikes face forward at race start
+- ✅ **Reduced Collision Sensitivity**: Stable, realistic physics
 
 ---
 
 ## 🔮 Future Enhancements
 
-- [x] AI opponents
-- [ ] Multiple AI difficulty levels
+- [x] AI opponents with difficulty scaling
+- [x] Bike selection system
+- [x] Dynamic obstacle scaling
 - [ ] Online multiplayer
 - [ ] Custom 3D bike models
-- [ ] Particle effects (dust, sparks)
+- [ ] Particle effects (dust, sparks, exhaust)
 - [ ] Weather effects (rain, fog)
 - [ ] Power-ups and boost zones
 - [ ] Replay system
@@ -231,6 +272,7 @@ This project is created for **educational purposes** demonstrating:
 - Game engine architecture
 - 3D graphics programming with Raylib
 - Physics simulation
+- AI implementation
 - Game design principles
 
 ---
