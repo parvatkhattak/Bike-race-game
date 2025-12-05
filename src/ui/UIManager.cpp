@@ -173,6 +173,10 @@ void UIManager::RenderMainMenu() const {
 }
 
 void UIManager::RenderBikeSelect() const {
+    // Dark gradient background to match other screens
+    DrawRectangleGradientV(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 
+                           (Color){20, 30, 50, 255}, (Color){40, 60, 90, 255});
+    
     DrawTitle("SELECT YOUR BIKE", 100);
     
     const char* bikeOptions[] = {"RED BIKE", "BLUE BIKE"};

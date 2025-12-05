@@ -146,27 +146,27 @@ void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos, int dif
     // Calculate how aligned we are with target (dot product)
     float dot = Vector3DotProduct(bikeDir, targetDir);
     
-    // Difficulty-based parameters
+    // Difficulty-based parameters (more competitive overall)
     float steeringPrecision, accelMult, nitroChance, brakeSpeed;
     
     if (difficulty == 1) {
-        // EASY - Less aggressive, slower reactions
-        steeringPrecision = 0.08f; // Less precise steering
-        accelMult = 0.75f;         // 75% acceleration
-        nitroChance = 3;           // 3% nitro chance
-        brakeSpeed = 30.0f;        // Brake later
+        // EASY - Still challenging but beatable
+        steeringPrecision = 0.07f; // Slightly less precise
+        accelMult = 0.9f;          // 90% acceleration (was 75%)
+        nitroChance = 8;           // 8% nitro chance (was 3%)
+        brakeSpeed = 28.0f;        // Brake a bit later
     } else if (difficulty == 3) {
-        // HARD - Perfect racing, very aggressive
+        // HARD - Very aggressive and competitive
         steeringPrecision = 0.03f; // Very precise steering
-        accelMult = 1.1f;          // 110% acceleration
-        nitroChance = 20;          // 20% nitro chance
-        brakeSpeed = 20.0f;        // Brake earlier for perfect corners
+        accelMult = 1.2f;          // 120% acceleration (was 110%)
+        nitroChance = 25;          // 25% nitro chance (was 20%)
+        brakeSpeed = 18.0f;        // Brake very early for perfect corners
     } else {
-        // MEDIUM (Level 2) - Balanced, current optimal AI
+        // MEDIUM (Level 2) - Strongly competitive
         steeringPrecision = 0.05f;
-        accelMult = 1.0f;
-        nitroChance = 10;
-        brakeSpeed = 25.0f;
+        accelMult = 1.05f;         // 105% acceleration (was 100%)
+        nitroChance = 15;          // 15% nitro chance (was 10%)
+        brakeSpeed = 23.0f;        // Brake earlier
     }
     
     // Steering logic with difficulty-based precision
