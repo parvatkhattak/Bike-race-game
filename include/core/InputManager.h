@@ -56,6 +56,7 @@ private:
         KeyboardKey nitro;
     };
 
+    // Keyboard mappings - Player 0 (human) uses arrow keys
     KeyMapping player1Keys = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT_SHIFT};
     KeyMapping player2Keys = {KEY_W, KEY_S, KEY_A, KEY_D, KEY_RIGHT_SHIFT};
 };

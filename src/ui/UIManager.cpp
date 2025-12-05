@@ -9,6 +9,7 @@ UIManager::UIManager() :
     currentState(UIState::MAIN_MENU),
     selectedMenuOption(0),
     maxMenuOptions(3),
+    selectedBikeIndex(0), // Default to red bike
     fontLoaded(false)
 {
     // Initialize HUD data
@@ -21,11 +22,22 @@ void UIManager::Update(float deltaTime) {
     if (currentState != UIState::IN_GAME) {
         auto& input = *GameEngine::GetInstance().GetInputManager();
         
-        if (input.IsMenuDownPressed()) {
-            selectedMenuOption = (selectedMenuOption + 1) % maxMenuOptions;
-        }
-        if (input.IsMenuUpPressed()) {
-            selectedMenuOption = (selectedMenuOption - 1 + maxMenuOptions) % maxMenuOptions;
+        // Bike selection uses up/down to choose bike
+        if (currentState == UIState::BIKE_SELECT) {
+            if (input.IsMenuDownPressed()) {
+                selectedBikeIndex = (selectedBikeIndex + 1) % 2; // Toggle between 0 and 1
+            }
+            if (input.IsMenuUpPressed()) {
+                selectedBikeIndex = (selectedBikeIndex - 1 + 2) % 2; // Toggle backwards
+            }
+        } else {
+            // Other menus use up/down for option selection
+            if (input.IsMenuDownPressed()) {
+                selectedMenuOption = (selectedMenuOption + 1) % maxMenuOptions;
+            }
+            if (input.IsMenuUpPressed()) {
+                selectedMenuOption = (selectedMenuOption - 1 + maxMenuOptions) % maxMenuOptions;
+            }
         }
         
         // Handle selection
@@ -44,14 +56,14 @@ void UIManager::Update(float deltaTime) {
                     break;
                     
                 case UIState::BIKE_SELECT:
-                    // Start level select
+                    // Bike selected, go to level select
                     SetState(UIState::LEVEL_SELECT);
                     break;
                     
                 case UIState::LEVEL_SELECT: {
-                    // Start game
+                    // Start game with selected bike
                     auto& levelMgr = *GameEngine::GetInstance().GetLevelManager();
-                    levelMgr.LoadLevel(selectedMenuOption + 1);
+                    levelMgr.LoadLevel(selectedMenuOption + 1, selectedBikeIndex);
                     levelMgr.StartRace();
                     GameEngine::GetInstance().SetState(GameState::PLAYING);
                     break;
@@ -163,28 +175,64 @@ void UIManager::RenderMainMenu() const {
 void UIManager::RenderBikeSelect() const {
     DrawTitle("SELECT YOUR BIKE", 100);
     
-    DrawText("Player 1: Red Bike", 200, 300, 30, RED);
-    DrawText("Player 2: Blue Bike", 200, 350, 30, BLUE);
+    const char* bikeOptions[] = {"RED BIKE", "BLUE BIKE"};
+    Color bikeColors[] = {RED, BLUE};
     
-    DrawText("Press ENTER to continue", Config::SCREEN_WIDTH / 2 - 120, Config::SCREEN_HEIGHT - 50, 20, LIGHTGRAY);
+    for (int i = 0; i < 2; i++) {
+        bool isSelected = (i == selectedBikeIndex);
+        Color textColor = isSelected ? YELLOW : bikeColors[i];
+        Color bgColor = isSelected ? ColorAlpha(bikeColors[i], 0.3f) : ColorAlpha(bikeColors[i], 0.1f);
+        int fontSize = isSelected ? 40 : 32;
+        
+        int textWidth = MeasureText(bikeOptions[i], fontSize);
+        int boxX = (Config::SCREEN_WIDTH - textWidth - 80) / 2;
+        int boxY = 300 + i * 100;
+        
+        // Draw selection box
+        DrawRectangle(boxX, boxY - 10, textWidth + 80, 60, bgColor);
+        if (isSelected) {
+            DrawRectangleLines(boxX, boxY - 10, textWidth + 80, 60, YELLOW);
+            DrawText(">", boxX - 40, boxY, fontSize, YELLOW);
+        }
+        
+        // Draw bike name
+        DrawText(bikeOptions[i], boxX + 40, boxY, fontSize, textColor);
+    }
+    
+    DrawText("Use ARROW KEYS to select", Config::SCREEN_WIDTH / 2 - 150, 520, 22, LIGHTGRAY);
+    DrawText("Press ENTER to continue", Config::SCREEN_WIDTH / 2 - 135, Config::SCREEN_HEIGHT - 50, 20, YELLOW);
 }
 
 void UIManager::RenderLevelSelect() const {
+    // Dark gradient background for better contrast
+    DrawRectangleGradientV(0, 0, Config::SCREEN_WIDTH, Config::SCREEN_HEIGHT, 
+                           (Color){20, 30, 50, 255}, (Color){40, 60, 90, 255});
+    
     DrawTitle("SELECT TRACK", 100);
     
     const char* tracks[] = {"Beginner Circuit", "Intermediate Track", "Advanced Track"};
-    const char* difficulty[] = {"[EASY]", "[MEDIUM]", "[HARD]"};
+    const char* difficulty[] = {"[EASY]", "MEDIUM]", "[HARD]"};
     
     for (int i = 0; i < 3; i++) {
-        Color color = (i == selectedMenuOption) ? YELLOW : WHITE;
-        int fontSize = (i == selectedMenuOption) ? 35 : 28;
+        bool isSelected = (i == selectedMenuOption);
+        Color color = isSelected ? GOLD : LIGHTGRAY; // Gold for selected, lightgray for others
+        int fontSize = isSelected ? 38 : 30;
         
         std::string text = std::string(tracks[i]) + " " + difficulty[i];
         int textWidth = MeasureText(text.c_str(), fontSize);
-        DrawText(text.c_str(), Config::SCREEN_WIDTH / 2 - textWidth / 2, 300 + i * 70, fontSize, color);
+        int x = Config::SCREEN_WIDTH / 2 - textWidth / 2;
+        int y = 300 + i * 80;
+        
+        // Draw selection box if selected
+        if (isSelected) {
+            DrawRectangle(x - 20, y - 10, textWidth + 40, fontSize + 20, ColorAlpha(GOLD, 0.2f));
+            DrawRectangleLines(x - 20, y - 10, textWidth + 40, fontSize + 20, GOLD);
+        }
+        
+        DrawText(text.c_str(), x, y, fontSize, color);
     }
     
-    DrawText("Press ENTER to start race", Config::SCREEN_WIDTH / 2 - 120, Config::SCREEN_HEIGHT - 50, 20, LIGHTGRAY);
+    DrawText("Press ENTER to start race", Config::SCREEN_WIDTH / 2 - 135, Config::SCREEN_HEIGHT - 50, 22, YELLOW);
 }
 
 void UIManager::RenderInGameHUD(const Player& player1, const Player& player2) const {

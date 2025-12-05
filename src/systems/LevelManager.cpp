@@ -35,7 +35,7 @@ void LevelManager::Initialize() {
     }
 }
 
-void LevelManager::LoadLevel(int levelID) {
+void LevelManager::LoadLevel(int levelID, int playerBikeIndex) {
     currentLevelID = levelID;
     
     // Create new track
@@ -54,6 +54,13 @@ void LevelManager::LoadLevel(int levelID) {
     std::mt19937 g(rd());
     std::shuffle(gridPositions.begin(), gridPositions.end(), g);
     
+    // Swap bike colors if needed so selected bike is always at index 0 (player 0)
+    // This ensures player 0 (arrow keys) controls the selected bike
+    if (playerBikeIndex == 1) {
+        // User selected blue bike, swap red and blue
+        std::swap(bikeColors[0], bikeColors[1]);
+    }
+    
     for (size_t i = 0; i < players.size(); i++) {
         // Use randomized grid position instead of player index
         int gridSlot = gridPositions[i];
@@ -70,12 +77,14 @@ void LevelManager::LoadLevel(int levelID) {
         players[i]->ResetRace();
     }
     
-    // Re-set all AI flags (Initialize/ResetRace don't preserve this)
+    // Player 0 is always human (uses arrow keys), all others are AI
+    players[0]->SetAI(false);
     for (size_t i = 1; i < players.size(); i++) {
         players[i]->SetAI(true);
     }
     
-    LOG_INFO("Loaded level " + std::to_string(levelID));
+    std::string bikeChoice = (playerBikeIndex == 0) ? "RED" : "BLUE";
+    LOG_INFO("Loaded level " + std::to_string(levelID) + " - Player chose " + bikeChoice + " bike");
 }
 
 void LevelManager::Update(float deltaTime) {

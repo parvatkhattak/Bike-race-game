@@ -51,6 +51,7 @@ private:
     UIState currentState;
     int selectedMenuOption;
     int maxMenuOptions;
+    int selectedBikeIndex; // 0 = Red bike, 1 = Blue bike
 
     // HUD data for each player
     struct HUDData {

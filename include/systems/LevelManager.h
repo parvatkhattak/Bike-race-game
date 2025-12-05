@@ -19,7 +19,8 @@ public:
     ~LevelManager() = default;
 
     void Initialize();
-    void LoadLevel(int levelID);
+    // Level management
+    void LoadLevel(int levelID, int playerBikeIndex = 0); // playerBikeIndex: 0=red, 1=blue
     void Update(float deltaTime);
     void Render() const;
 

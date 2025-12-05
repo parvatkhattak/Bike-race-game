@@ -126,7 +126,7 @@ void Player::ProcessInput(float accelerateInput, float brakeInput, float turnInp
     }
 }
 
-void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos) {
+void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos, int difficulty) {
     if (!bike) return;
     
     Vector3 bikePos = bike->GetPosition();

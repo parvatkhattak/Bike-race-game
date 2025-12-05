@@ -53,7 +53,7 @@ public:
     // AI Control
     void SetAI(bool ai) { isAI = ai; }
     bool IsAI() const { return isAI; }
-    void UpdateAI(float deltaTime, const Vector3& nextCheckpointPos);
+    void UpdateAI(float deltaTime, const Vector3& nextCheckpointPos, int difficulty = 1); // difficulty: 1=Easy, 2=Medium, 3=Hard
 
 private:
     int playerID;
