@@ -129,7 +129,7 @@ void LevelManager::Update(float deltaTime) {
                              if (!checkpoints.empty()) targetPos = checkpoints[0]->GetPosition();
                          }
                     }
-                    player->UpdateAI(deltaTime, targetPos);
+                    player->UpdateAI(deltaTime, targetPos, currentLevelID); // Pass level as difficulty
                 } else {
                     // Human Input
                     auto inputMgr = GameEngine::GetInstance().GetInputManager();

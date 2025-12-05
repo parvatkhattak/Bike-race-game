@@ -146,50 +146,71 @@ void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos, int dif
     // Calculate how aligned we are with target (dot product)
     float dot = Vector3DotProduct(bikeDir, targetDir);
     
-    // Improved steering logic with proportional control
-    if (fabsf(cross.y) > 0.05f) {
-        // Proportional steering - turn harder when more misaligned
+    // Difficulty-based parameters
+    float steeringPrecision, accelMult, nitroChance, brakeSpeed;
+    
+    if (difficulty == 1) {
+        // EASY - Less aggressive, slower reactions
+        steeringPrecision = 0.08f; // Less precise steering
+        accelMult = 0.75f;         // 75% acceleration
+        nitroChance = 3;           // 3% nitro chance
+        brakeSpeed = 30.0f;        // Brake later
+    } else if (difficulty == 3) {
+        // HARD - Perfect racing, very aggressive
+        steeringPrecision = 0.03f; // Very precise steering
+        accelMult = 1.1f;          // 110% acceleration
+        nitroChance = 20;          // 20% nitro chance
+        brakeSpeed = 20.0f;        // Brake earlier for perfect corners
+    } else {
+        // MEDIUM (Level 2) - Balanced, current optimal AI
+        steeringPrecision = 0.05f;
+        accelMult = 1.0f;
+        nitroChance = 10;
+        brakeSpeed = 25.0f;
+    }
+    
+    // Steering logic with difficulty-based precision
+    if (fabsf(cross.y) > steeringPrecision) {
         turn = (cross.y > 0) ? -1.0f : 1.0f;
         
         // Reduce turn rate when closely aligned for smoother racing line
         if (dot > 0.85f) {
-            turn *= 0.6f; // Smooth steering on straights
+            turn *= (difficulty == 1 ? 0.5f : 0.6f); // Easy AI turns less smoothly
         }
     }
     
-    // Optimal speed control based on alignment and distance
+    // Speed control based on alignment and difficulty
     float accel = 0.0f;
     float brake = 0.0f;
     bool nitro = false;
     
     if (dot > 0.9f) {
         // Nearly perfect alignment - full acceleration
-        accel = 1.0f;
+        accel = 1.0f * accelMult;
         
-        // Use nitro more aggressively on straights
-        if (dot > 0.95f && currentSpeed > 30.0f && (rand() % 100) < 10) {
+        // Use nitro based on difficulty
+        if (dot > 0.95f && currentSpeed > 30.0f && (rand() % 100) < nitroChance) {
             nitro = true;
         }
     } else if (dot > 0.7f) {
-        // Good alignment - accelerate but less aggressively
-        accel = 0.8f;
+        // Good alignment
+        accel = 0.8f * accelMult;
     } else if (dot > 0.4f) {
-        // Moderate turn - reduce speed
-        accel = 0.5f;
+        // Moderate turn
+        accel = 0.5f * accelMult;
     } else {
         // Sharp turn ahead - brake to optimal cornering speed
-        if (currentSpeed > 25.0f) {
-            brake = 0.8f;
+        if (currentSpeed > brakeSpeed) {
+            brake = (difficulty == 1 ? 0.6f : 0.8f); // Easy AI brakes less
             accel = 0.0f;
         } else {
-            // Don't brake too much, maintain minimum speed
-            accel = 0.3f;
+            accel = 0.3f * accelMult;
         }
     }
     
-    // Anticipatory braking for very sharp turns
-    if (dot < 0.3f && currentSpeed > 20.0f) {
-        brake = 1.0f;
+    // Anticipatory braking for very sharp turns (harder AI brakes earlier)
+    if (dot < 0.3f && currentSpeed > brakeSpeed) {
+        brake = (difficulty == 3 ? 1.0f : 0.8f);
         accel = 0.0f;
     }
     
