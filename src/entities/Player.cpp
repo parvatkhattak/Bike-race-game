@@ -131,42 +131,66 @@ void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos) {
     
     Vector3 bikePos = bike->GetPosition();
     Vector3 bikeDir = bike->GetDirection();
+    float currentSpeed = bike->GetSpeed();
     
     // Calculate direction to next checkpoint
     Vector3 targetDir = Vector3Subtract(nextCheckpointPos, bikePos);
+    float distanceToTarget = Vector3Length(targetDir);
     targetDir.y = 0; // Ignore height difference for steering
     targetDir = Vector3Normalize(targetDir);
     
     // Calculate steering angle using cross product
-    // Cross product Y component tells us left/right
     Vector3 cross = Vector3CrossProduct(bikeDir, targetDir);
     float turn = 0.0f;
     
-    // Steering logic
-    if (cross.y > 0.1f) turn = -1.0f; // Turn Left
-    else if (cross.y < -0.1f) turn = 1.0f; // Turn Right
-    
-    // Adjust turn sensitivity based on how far off we are
+    // Calculate how aligned we are with target (dot product)
     float dot = Vector3DotProduct(bikeDir, targetDir);
     
-    // Speed control
+    // Improved steering logic with proportional control
+    if (fabsf(cross.y) > 0.05f) {
+        // Proportional steering - turn harder when more misaligned
+        turn = (cross.y > 0) ? -1.0f : 1.0f;
+        
+        // Reduce turn rate when closely aligned for smoother racing line
+        if (dot > 0.85f) {
+            turn *= 0.6f; // Smooth steering on straights
+        }
+    }
+    
+    // Optimal speed control based on alignment and distance
     float accel = 0.0f;
     float brake = 0.0f;
     bool nitro = false;
     
-    if (dot > 0.8f) {
-        // Facing mostly towards target, full speed
+    if (dot > 0.9f) {
+        // Nearly perfect alignment - full acceleration
         accel = 1.0f;
-        // Use nitro on straightaways occasionally
-        if (dot > 0.95f && (rand() % 100) < 2) nitro = true; 
-    } else if (dot > 0.5f) {
-        // Turning, moderate speed
+        
+        // Use nitro more aggressively on straights
+        if (dot > 0.95f && currentSpeed > 30.0f && (rand() % 100) < 10) {
+            nitro = true;
+        }
+    } else if (dot > 0.7f) {
+        // Good alignment - accelerate but less aggressively
+        accel = 0.8f;
+    } else if (dot > 0.4f) {
+        // Moderate turn - reduce speed
         accel = 0.5f;
     } else {
-        // Sharp turn, brake
+        // Sharp turn ahead - brake to optimal cornering speed
+        if (currentSpeed > 25.0f) {
+            brake = 0.8f;
+            accel = 0.0f;
+        } else {
+            // Don't brake too much, maintain minimum speed
+            accel = 0.3f;
+        }
+    }
+    
+    // Anticipatory braking for very sharp turns
+    if (dot < 0.3f && currentSpeed > 20.0f) {
         brake = 1.0f;
-        // Sharp turn
-        turn = (cross.y > 0) ? -1.0f : 1.0f;
+        accel = 0.0f;
     }
     
     ProcessInput(accel, brake, turn, nitro);

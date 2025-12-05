@@ -183,9 +183,9 @@ void PhysicsEngine::ResolveCollision(Bike* bike1, Bike* bike2) {
             float separatingVelocity = Vector3DotProduct(relativeVel, normal);
             
             if (separatingVelocity < 0) {
-                float restitution = 0.7f; // Bounciness - increased for more elastic collisions
+                float restitution = 0.5f; // Reduced for less sensitive collisions
                 float impulse = (-1 - restitution) * separatingVelocity;
-                Vector3 impulseVector = Vector3Scale(normal, impulse * 0.8f); // Stronger impulse transfer
+                Vector3 impulseVector = Vector3Scale(normal, impulse * 0.6f); // Reduced impulse strength
                 
                 bike1->SetVelocity(Vector3Add(vel1, impulseVector));
                 bike2->SetVelocity(Vector3Subtract(vel2, impulseVector));
