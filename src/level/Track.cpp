@@ -49,16 +49,14 @@ void Track::CreateBeginnerTrack() {
     checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 60}, 15.0f, 6)); // Near finish
     checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 80}, 20.0f, 7)); // FINISH LINE
     
-    // Add solid obstacles for challenge
+    // Simple oval track with few solid obstacles (EASY)
     obstacles.clear();
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{15, 1, -30}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-15, 1, -10}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{12, 1, 10}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-12, 1, 30}, ObstacleType::STATIC_BARRIER, Vector3{3, 3, 3}));
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{18, 1, 55}, ObstacleType::STATIC_BARRIER, Vector3{4, 4, 4}));
-    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-18, 1, 55}, ObstacleType::STATIC_BARRIER, Vector3{4, 4, 4}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{15, 1, 0}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-15, 1, 0}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{0, 1, 20}, ObstacleType::RAMP, Vector3{6, 1, 3}));
+    // Total: 3 obstacles
     
-    LOG_INFO("Beginner track created with " + std::to_string(checkpoints.size()) + " checkpoints");
+    LOG_INFO("Beginner track created with " + std::to_string(checkpoints.size()) + " checkpoints and " + std::to_string(obstacles.size()) + " obstacles");
 }
 
 void Track::CreateIntermediateTrack() {
@@ -78,13 +76,17 @@ void Track::CreateIntermediateTrack() {
     checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{-25, 0.5f, -15}, 7.0f, 4));
     checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{-25, 0.5f, 15}, 7.0f, 5));
     
-    // Solid obstacles
+    // More solid obstacles for medium difficulty
     obstacles.clear();
     obstacles.push_back(std::make_unique<Obstacle>(Vector3{12, 1, 8}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
     obstacles.push_back(std::make_unique<Obstacle>(Vector3{-12, 1, -8}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
     obstacles.push_back(std::make_unique<Obstacle>(Vector3{18, 1, 0}, ObstacleType::MOVING_PLATFORM, Vector3{3, 1, 3}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-18, 1, 5}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{8, 1, -12}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-8, 1, 12}, ObstacleType::RAMP, Vector3{5, 1, 3}));
+    // Total: 6 obstacles
     
-    LOG_INFO("Intermediate track created");
+    LOG_INFO("Intermediate track created with " + std::to_string(checkpoints.size()) + " checkpoints and " + std::to_string(obstacles.size()) + " obstacles");
 }
 
 void Track::CreateAdvancedTrack() {
@@ -105,16 +107,23 @@ void Track::CreateAdvancedTrack() {
     checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{-30, 0.5f, 20}, 6.0f, 5));
     checkpoints.push_back(std::make_unique<Checkpoint>(Vector3{0, 0.5f, 10}, 6.0f, 6));
     
-    // Many solid obstacles for challenge
+    // Many solid obstacles for hard difficulty
     obstacles.clear();
+    // Circular pattern of 8 obstacles
     for (int i = 0; i < 8; i++) {
         float angle = (i / 8.0f) * 2.0f * PI;
         float x = cosf(angle) * 20.0f;
         float z = sinf(angle) * 20.0f;
         obstacles.push_back(std::make_unique<Obstacle>(Vector3{x, 1, z}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
     }
+    // Additional hazards in strategic positions
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{15, 1, 10}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-15, 1, -10}, ObstacleType::STATIC_BARRIER, Vector3{2, 2, 2}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{10, 1, -15}, ObstacleType::MOVING_PLATFORM, Vector3{3, 1, 3}));
+    obstacles.push_back(std::make_unique<Obstacle>(Vector3{-10, 1, 15}, ObstacleType::RAMP, Vector3{5, 1, 3}));
+    // Total: 12 obstacles
     
-    LOG_INFO("Advanced track created");
+    LOG_INFO("Advanced track created with " + std::to_string(checkpoints.size()) + " checkpoints and " + std::to_string(obstacles.size()) + " obstacles");
 }
 
 void Track::LoadTrackModel() {
