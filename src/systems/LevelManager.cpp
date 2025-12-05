@@ -105,29 +105,28 @@ void LevelManager::Update(float deltaTime) {
             UpdateRaceProgress(deltaTime);
             CheckCheckpoints();
             CheckCollisions();
-            UpdatePlayerPositions();
-            
-            // Update players
             for (auto& player : players) {
+                if (!player) continue;
+                // Update based on control type
                 if (player->IsAI()) {
-                    // AI Logic
-                    // Get next checkpoint position
-                    int nextCPIndex = player->GetCheckpointsPassed();
-                    // If nextCPIndex is valid
-                    Vector3 targetPos = {0,0,0};
+                    // AI Navigation
+                    Vector3 targetPos = {0, 0, 0};
+                    
+                    // Get AI's current checkpoint progress
+                    int aiCheckpointsPassed = player->GetCheckpointsPassed();
+                    int nextCPIndex = aiCheckpointsPassed; // Next checkpoint to reach
+                    
                     if (currentTrack) {
-                         // We need a way to get checkpoint position. 
-                         // Track::GetCheckpoints() returns vector of unique_ptr<Checkpoint>
-                         // Let's assume we can access it or add a helper.
-                         // For now, let's look at Track.h/cpp to see if we can get checkpoint pos.
-                         // Track has GetCheckpoints().
-                         const auto& checkpoints = currentTrack->GetCheckpoints();
-                         if (nextCPIndex < (int)checkpoints.size()) {
-                             targetPos = checkpoints[nextCPIndex]->GetPosition();
-                         } else {
-                             // Lap complete, target first checkpoint
-                             if (!checkpoints.empty()) targetPos = checkpoints[0]->GetPosition();
-                         }
+                        const auto& checkpoints = currentTrack->GetCheckpoints();
+                        // Target the NEXT checkpoint they need to hit
+                        if (nextCPIndex < (int)checkpoints.size()) {
+                            targetPos = checkpoints[nextCPIndex]->GetPosition();
+                        } else {
+                            // All checkpoints passed, target first one (finish line)
+                            if (!checkpoints.empty()) {
+                                targetPos = checkpoints[checkpoints.size() - 1]->GetPosition(); // Last checkpoint is finish
+                            }
+                        }
                     }
                     player->UpdateAI(deltaTime, targetPos, currentLevelID); // Pass level as difficulty
                 } else {
@@ -136,9 +135,9 @@ void LevelManager::Update(float deltaTime) {
                     float accel = inputMgr->GetAxisValue(player->GetID(), InputAction::ACCELERATE);
                     float brake = inputMgr->GetAxisValue(player->GetID(), InputAction::BRAKE);
                     float turn = inputMgr->GetAxisValue(player->GetID(), InputAction::TURN_RIGHT);
-                    bool nitro = inputMgr->IsActionPressed(player->GetID(), InputAction::NITRO);
                     
-                    player->ProcessInput(accel, brake, turn, nitro);
+                    bool nitroPressed = inputMgr->IsActionDown(player->GetID(), InputAction::NITRO);
+                    player->ProcessInput(accel, brake, turn, nitroPressed);
                 }
                 
                 player->Update(deltaTime);
