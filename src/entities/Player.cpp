@@ -131,87 +131,31 @@ void Player::UpdateAI(float deltaTime, const Vector3& nextCheckpointPos, int dif
     
     Vector3 bikePos = bike->GetPosition();
     Vector3 bikeDir = bike->GetDirection();
-    float currentSpeed = bike->GetSpeed();
     
-    // Calculate direction to next checkpoint
+    // Calculate direction to target
     Vector3 targetDir = Vector3Subtract(nextCheckpointPos, bikePos);
-    float distanceToTarget = Vector3Length(targetDir);
-    targetDir.y = 0; // Ignore height difference for steering
+    targetDir.y = 0;
     targetDir = Vector3Normalize(targetDir);
     
-    // Calculate steering angle using cross product
-    Vector3 cross = Vector3CrossProduct(bikeDir, targetDir);
-    float turn = 0.0f;
-    
-    // Calculate how aligned we are with target (dot product)
+    // Calculate alignment with target
     float dot = Vector3DotProduct(bikeDir, targetDir);
+    Vector3 cross = Vector3CrossProduct(bikeDir, targetDir);
     
-    // Difficulty-based parameters (more competitive overall)
-    float steeringPrecision, accelMult, nitroChance, brakeSpeed;
-    
-    if (difficulty == 1) {
-        // EASY - Still challenging but beatable
-        steeringPrecision = 0.07f; // Slightly less precise
-        accelMult = 0.9f;          // 90% acceleration (was 75%)
-        nitroChance = 8;           // 8% nitro chance (was 3%)
-        brakeSpeed = 28.0f;        // Brake a bit later
-    } else if (difficulty == 3) {
-        // HARD - Very aggressive and competitive
-        steeringPrecision = 0.03f; // Very precise steering
-        accelMult = 1.2f;          // 120% acceleration (was 110%)
-        nitroChance = 25;          // 25% nitro chance (was 20%)
-        brakeSpeed = 18.0f;        // Brake very early for perfect corners
-    } else {
-        // MEDIUM (Level 2) - Strongly competitive
-        steeringPrecision = 0.05f;
-        accelMult = 1.05f;         // 105% acceleration (was 100%)
-        nitroChance = 15;          // 15% nitro chance (was 10%)
-        brakeSpeed = 23.0f;        // Brake earlier
-    }
-    
-    // Steering logic with difficulty-based precision
-    if (fabsf(cross.y) > steeringPrecision) {
-        turn = (cross.y > 0) ? -1.0f : 1.0f;
-        
-        // Reduce turn rate when closely aligned for smoother racing line
-        if (dot > 0.85f) {
-            turn *= (difficulty == 1 ? 0.5f : 0.6f); // Easy AI turns less smoothly
-        }
-    }
-    
-    // Speed control based on alignment and difficulty
-    float accel = 0.0f;
+    // SIMPLIFIED AI: Just race forward!
+    float accel = 1.0f; // Always full throttle
     float brake = 0.0f;
+    float turn = 0.0f;
     bool nitro = false;
     
-    if (dot > 0.9f) {
-        // Nearly perfect alignment - full acceleration
-        accel = 1.0f * accelMult;
-        
-        // Use nitro based on difficulty
-        if (dot > 0.95f && currentSpeed > 30.0f && (rand() % 100) < nitroChance) {
-            nitro = true;
-        }
-    } else if (dot > 0.7f) {
-        // Good alignment
-        accel = 0.8f * accelMult;
-    } else if (dot > 0.4f) {
-        // Moderate turn
-        accel = 0.5f * accelMult;
-    } else {
-        // Sharp turn ahead - brake to optimal cornering speed
-        if (currentSpeed > brakeSpeed) {
-            brake = (difficulty == 1 ? 0.6f : 0.8f); // Easy AI brakes less
-            accel = 0.0f;
-        } else {
-            accel = 0.3f * accelMult;
-        }
+    // Only turn if significantly off-course
+    if (fabsf(cross.y) > 0.15f) {
+        turn = (cross.y > 0) ? -0.3f : 0.3f; // Gentle correction
     }
     
-    // Anticipatory braking for very sharp turns (harder AI brakes earlier)
-    if (dot < 0.3f && currentSpeed > brakeSpeed) {
-        brake = (difficulty == 3 ? 1.0f : 0.8f);
-        accel = 0.0f;
+    // Use nitro frequently based on difficulty
+    int nitroChance = (difficulty == 1) ? 5 : (difficulty == 3) ? 20 : 10;
+    if ((rand() % 100) < nitroChance) {
+        nitro = true;
     }
     
     ProcessInput(accel, brake, turn, nitro);
